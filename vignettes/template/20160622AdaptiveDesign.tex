@@ -1,0 +1,885 @@
+\documentclass{beamer}
+% applying a beamer theme
+\usetheme{Antibes}
+% adding an informative footline
+\useoutertheme{infolines}
+
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{verbatim}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{pgfpages}
+%\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]
+
+\setbeameroption{hide notes}
+%\setbeameroption{show notes}
+%\setbeameroption{show only notes}
+
+
+% items enclosed in square brackets are optional; explanation below
+\title[BDM Seminar]{Interim Analysis and Adaptive Design}
+%\subtitle[Errors]{Estimation of numerical errors}
+\logo{\includegraphics[width=2cm,height=2cm,keepaspectratio]{logo.png}}
+\author[R. Qin and Y. Du]{Rui Qin and Yunling Du}
+\institute[]{Biostatistics and Data Management \\
+Regeneron Pharmaceuticals \\ 
+\texttt{rui.qin@regeneron.com}
+}
+
+\date[June 22, 2016]{June 22, 2016}
+
+
+\begin{document}
+
+%--------------------- the title page frame -------------------------%
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+%--------------------- the title page frame -------------------------%
+%\begin{comment}
+%\end{comment}
+
+%--------------------- create table of contents page ----------------%
+\begin{frame}{Table of Contents}
+  \tableofcontents
+\end{frame}
+
+\section{Adaptive Design}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Clinical Trial}
+	\begin{itemize}
+		\item A prospectively planned experiment for the purpose of evaluating a potentially beneficial therapy or treatment
+		\item Conducted under as many controlled conditions as possible so that they provide definitive answers to pre-determined, well-defined questions
+		\item Classic design requires such parameters to be pre-specified and fixed throughout a clinical trial
+		\begin{itemize}
+		  \item Sample size
+		  \item Randomization ratio
+		  \item Number of study arms
+		  \item \ldots\ \ldots
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+\note{generally no interim analysis, traditional into four phases: phase I, phase II, phase III and phase IV.}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+    \frametitle{Adaptations in Clinical Trial}
+Sometimes are necessary to     
+    \begin{itemize}
+        \item reflect real medical practice on the actual patient population with the disease under study
+        \item increase the probability of success for identifying clinical benefit of treatment  
+    \end{itemize}
+Include but not limited to         
+  \begin{itemize}
+  \item Modifications of inclusion/exclusion criteria
+  \item Adjustment of study dose or treatment
+  \item Extension of study duration
+  \item Changes in study endpoints
+  \item \textcolor{red}{Modifications in study design based on interim analysis}
+  \end{itemize}
+
+\end{frame}
+\note{some adaptations are more statistical}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Interim Analysis (IA)}
+	\begin{itemize}
+		\item \emph{``Any examination of data obtained in a study while that study is still ongoing, and is not restricted to cases in which there are formal between-group comparisons"} -- FDA Guidance on Adaptive Design (2010)
+		\item Reasons for interim analysis \begin{itemize}
+			\item Ethical
+			\note{ensure patients not exposed to unsafe, inferior or ineffective treatment regimens}
+			\item Administrative
+			\note{ensure the trial is being executed as planned, correct population, eligibility, treatment prescribed correctly, check on assumptions made about the study}
+			\item Economic
+			\note{developed in order to obtain economic benefit, positive results to move to next phase, negative to ensure resources are not wasted}
+		\end{itemize}
+		\item Types of interim analysis \begin{itemize}
+			\item Efficacy vs. Safety vs. Other
+			\item Blinded vs. Unblinded
+		\end{itemize}
+		\item Multiple stages are formed with interim analysis
+		\note{While continuous monitoring is desirable but often impractical}
+   		\end{itemize}
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Adaptive Design}
+  \begin{itemize}
+	\item \emph{``A study design that includes a prospectively planned opportunity for modification of one or more specified aspects of the study design and hypotheses based on analysis of data"} -- FDA Guidance on Adaptive Design (2010)
+	\item Adaptations based on interim analysis
+	\begin{itemize}
+	\item Dose escalation/de-escalation
+	\item Early stopping for superiority or futility
+	\item Sample size re-estimation
+	\item Outcome-adaptive randomization
+	\item Study population enrichment
+	\item Drop or add study arms
+    \item \ldots\ \ldots
+	\end{itemize}		
+	\end{itemize}
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Types of Adaptive Designs}	
+	\begin{itemize}
+		\item \textcolor{brown}{Adaptive Dose-Finding Design}
+		\item \textcolor{purple}{Group Sequential Design} 
+		\item \textcolor{blue}{Sample Size Re-estimation}
+		\item \textcolor{blue}{Adaptive Randomization Design}
+		\item \textcolor{blue}{Drop-Loser and/or Add-Arm Design}
+		\item \textcolor{blue}{Biomarker-Adaptive Design}
+	    \item \ldots\ \ldots
+	    \item \textcolor{red}{Bayesian Design}
+	\end{itemize}	
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Statistical Aspects}
+	\begin{itemize}
+		\item Type I error --  $\alpha$ control and determination of stopping boundaries
+		\item Type II error -- $\beta$ control and calculation of power or sample size 
+		\item Trial monitoring -- make decisions based on conditional power (or futility index)
+		\item Analysis after completion of study -- calculation of adjusted p-values, unbiased point estimates and confidence intervals
+	\end{itemize}
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Pro's and Con's}
+	\begin{figure}
+		\begin{center}
+			\includegraphics[width=0.95\textwidth,height=0.95\textheight,keepaspectratio]{adaptive-pros-and-cons-2.jpg}
+			\footnote{www.advancedclinical.com}
+		\end{center}
+	\end{figure}	
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}<presentation:0>
+    \frametitle{Benefits of Adaptive Designs}  
+\note{Make a clinical study more efficient}  
+   \begin{itemize}
+      \item Early decision making
+      \item Shorter study duration
+      \item Fewer patients exposed to a treatment which is inefficacious
+      \item More likely to demonstrate an effect of the treatment if one exists
+      \item More flexible and informative           
+    \end{itemize}
+\end{frame}
+\addtocounter{framenumber}{-1}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}<presentation:0>
+	\frametitle{Concerns of Adaptive Design}
+  \begin{itemize}
+	\item Potential to increase the chance of erroneous positive conclusion
+	\item Difficulty in interpreting results when a treatment effect is shown
+	\item Operational bias from unblinding interim analysis
+	\item Potential to limit identifying gaps in knowledge
+	\item Elimination of time to thoughtfully explore study results
+	\item Complex adaptive design for increased planning and more advanced time frame for planning
+  \end{itemize}
+\end{frame}
+\addtocounter{framenumber}{-1}
+%----------- slide --------------------------------------------------%
+
+
+\section{Examples}
+%----------- slide --------------------------------------------------%
+\subsection{Group Sequential Design (GSD)}
+\begin{frame}
+	\frametitle{Group Sequential Design (GSD)}
+	\begin{figure}
+		\begin{center}
+			\includegraphics[width=0.9\textwidth,height=0.9\textheight,keepaspectratio]{group-sequential-design-v11_EN.png}
+			\footnote{Figure 1. of EUPATI (2015)}
+		\end{center}
+	\end{figure}	
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{A Phase III NSCLC Trial}
+Consider to design a phase III clinical trial for an experimental therapy vs. standard chemotherapy (control) in non-small cell lung cancer (NSCLC) patients, the primary endpoint is overall survival (OS)
+  \begin{itemize}
+  \item $OS_{ctrl}=12\ months$
+  \item The clinically meaningful effect size $HR=0.75$, (i.e. $OS_{trt}=16\ months$) 
+  \item Type I error $\alpha = 2.5\%$ (one-sided)
+  \item Power $1-\beta = 90\%$
+  \item Accrual period of 48 months 
+%  \item Drop-out rate \ldots\ \ldots
+  \item Minimum follow-up period of 12 months
+\end{itemize}
+
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Classic Design with Fixed Sample Size}
+\begin{itemize}
+		\item Pre-specify accrual and drop out rates
+	    \item Total study duration is at least 60 months!
+		\item Sample size \begin{itemize}
+			\item Required number of events is 507
+			\item Required number of patients is 718
+		\end{itemize}
+        \item No (formal) interim analysis
+        \item Must wait till the study end to analyze data and make decisions
+\end{itemize}
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{GSD with Interim Analysis}
+Can we evaluate efficacy results earlier to make decisions? \begin{itemize}
+  \item If the experimental therapy truly works, can we complete study early to claim efficacy? -- \textcolor{green}{Superiority}
+  \item If the experimental therapy does not work, can we terminate study early to avoid harmful patient exposure? -- \textcolor{red}{Futility}
+  %\item Both of the above together?
+\end{itemize}
+
+\textcolor{blue}{Solution: Group sequential design with interim analysis} 
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{GSD with Interim Analysis}
+ \begin{itemize}
+		\item How many interim analysis? \begin{itemize}
+		\item \textcolor{blue}{Not too many as interim analysis takes time and efforts} 
+		\end{itemize}
+		\item When to conduct interim analysis? \begin{itemize}
+		\item \textcolor{blue}{Not too early as information may be too limited for making decisions, at least 25\%--35\%}
+		\item \textcolor{blue}{Not too late (relative to study duration) as benefit of interim analysis diminishes} 
+		\end{itemize}
+		\item Types of interim analysis? \begin{itemize}
+		\item \textcolor{blue}{Superiority only}
+		\item \textcolor{blue}{Futility only}
+		\item \textcolor{blue}{Both superiority and futility (binding vs. non-binding)}
+		\end{itemize}
+	\end{itemize}
+	
+
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Statistical Issues}
+\begin{itemize}
+   \item Repeated significance testing with interim analysis
+   \begin{itemize}
+   	\item Claim efficacy after 1st interim analysis
+   	\item Claim efficacy after 2nd interim analysis if study continues after 1st interim analysis
+   	\item \ldots \ldots
+   	\item Claim efficacy after final analysis if study continues after all interim analysis
+   \end{itemize}
+  	\item Multiple looks of superiority inflate family-wise error rate (FWER) of type I error (introduce bias)   \note{The probability of making one or more false discoveries (type I errors) among all the hypotheses when performing multiple hypotheses tests}
+  	\item  Multiple looks of futility inflate FWER of type II error (decrease power)
+  	\item Implementation of interim analysis for confirmatory trials must be done by an independent data monitoring committee (IMDC)
+\end{itemize}
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}<presentation:0>
+	\frametitle{Statistical Design with Interim Analysis}
+How to deal with repeated significance testing \begin{itemize}
+			\item How many interim analysis?
+			\item Timing of interim analysis? 
+		    \item Repeated significance testing
+			\item Actions to take after interim analysis? \begin{itemize}
+				\item Stop for efficacy (superiority) only
+				\item Stop for inefficacy (futility) only: binding vs. non-binding
+				\item Stop for either superiority or futility
+				\item Continue to the next stage \ldots \ldots
+		     \end{itemize} 
+	\end{itemize}
+\end{frame}\addtocounter{framenumber}{-1}
+%----------- slide --------------------------------------------------%
+\begin{frame}<presentation:0>
+	\frametitle{Family-Wise Error Rate}
+	\begin{itemize}
+		\item The probability of making one or more false discoveries (type I errors) among all the hypotheses when performing multiple hypotheses tests
+	    \item What if no adjustment for statistical design? \begin{itemize}
+		   \item Inflation of FWER
+		   \item Inflation overall type II error $\longrightarrow$ lower power	
+	    \end{itemize}		
+		\item FWER control methods
+		\begin{itemize}
+			\item Pocock Boundary 
+			\item O'Brien-Fleming Boundary
+			\item Spending function
+		\end{itemize}
+	\end{itemize}	
+\note{Bonferroni approach, overly conservative, non-parametric approach, Nominal p-value}	
+\note{If interim analysis is integrated to stop the trial early for Non-binding lower bound. Lower bounds are sometimes considered as guidelines, which may be ignored during the course of the trial. Since Type I error is in	ated if this is the	case, regulators often demand that the lower bounds be ignored when computing Type I error.}
+\end{frame}\addtocounter{framenumber}{-1}
+%----------- slide --------------------------------------------------%
+\begin{frame}<presentation:0>
+	\frametitle{Pocock vs. O'Brien-Fleming Boundaries}
+	\begin{figure}
+		\begin{center}
+			\includegraphics[width=1.0\textwidth,height=0.75\textheight,keepaspectratio]{seqd04e.png}
+		\end{center}
+	\end{figure}
+\end{frame}\addtocounter{framenumber}{-1}
+\note{By setting the interim boundaries to be substantially higher than(:975) = 1:96 we have
+	drastically reduced the excess Type I error caused by multiple testing while still testing at the
+	nominal .05 (2-sided) level at the analysis.	
+	Constant critical value, constant nominal significance level (well below the overall significance level to avoid multiple-look problem)
+	
+	Critical value computed numerically using the joint distribution of sequence of test statistics
+	Show results of design parameters and boundary plots of p-value and hazard ratio}
+
+\note{More stringent boundary, nominal significance levels needed to reject null hypothesis in each analysis increase as study progress.
+	
+	More difficult to reject H0 at earlier analyses but easier later on.
+	
+	In oncology trials, OF boundary is preferred \begin{itemize}
+		\item data quality at study entry
+		\item data entry timeliness
+		\item Scientific community skeptical when there are only a few observations
+	\end{itemize}}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{GSD for NSCLC Trial}
+Consider to modify the classic design for NSCLC trial to a group sequential design with \begin{itemize}
+		\item One interim analysis at 50\% information (i.e. number of events)
+		\item Both superiority and futility at interim analysis
+		\item FWER control methods \begin{itemize}
+		\item Pocock bounds
+		\item O'Brien-Fleming bounds
+		\item Spending function approach (Hwang-Shih-DeCani family)
+	\end{itemize}
+\end{itemize}	
+\end{frame}		
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{GSD with Pocock Bounds}
+\begin{columns}
+	\begin{column}{0.48\textwidth}
+	\includegraphics[scale=0.32]{figpocockhr} 
+	\end{column}
+	\begin{column}{0.48\textwidth} \begin{itemize}
+	  \item Terminate study for superiority if $HR \leq 0.79$ at interim analysis
+	  \item Terminate study for futility if $HR\geq 0.89 $ at interim analysis
+	  \item Continue study if $ 0.79 < HR < 0.89 $ at interim analysis
+	  \item Claim efficacy if $HR \leq 0.84$ after final analysis
+	  \item Required number of events increases (from 507) to 637 
+	  \end{itemize}
+	\end{column}
+\end{columns}	
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{GSD with Pocock Bounds}
+\begin{table}[ht]
+	\centering\small
+	\begin{tabular}{llrr}
+		\hline
+		Analysis & Value & Efficacy & Futility \\ 
+		\hline
+		IA 1: 50\% & Z & 2.1570 & 1.0313 \\ 
+		N: 768 & p (1-sided) & 0.0155 & 0.1512 \\ 
+		Events: 319 & HR at bound & 0.7852 & 0.8908 \\ 
+		Month: 36 & P(Cross) if $H_{0}$ true (HR=1) & 0.0155 & 0.8488 \\ 
+		& P(Cross) if $H_{1}$ true (HR=0.75) & 0.6600 & 0.0620 \\ 
+		\hline
+		Final & Z & 2.2010 & 2.2010 \\ 
+		N: 902 & p (1-sided) & 0.0139 & 0.0139 \\ 
+		Events: 637 & HR at bound & 0.8399 & 0.8399 \\ 
+		Month: 60 & P(Cross) if $H_{0}$ true (HR=1) & 0.0229 & 0.9771 \\ 
+		& P(Cross) if $H_{1}$ true (HR=0.75) & 0.9000 & 0.1000 \\ 
+		\hline
+	\end{tabular}
+	\label{tab1}
+\end{table}
+\begin{itemize}
+	\item Approx. 66\% chance to claim superiority at IA if therapy is efficacious
+	\item Approx. 85\% chance to claim futility at IA if therapy is not efficacious 
+    \item Duration of study reduced to 36 months if either superiority or futility is claimed at IA
+\end{itemize}
+\end{frame}
+
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{GSD with O'Brien-Fleming Bounds}
+\begin{columns}
+	\begin{column}{0.48\textwidth}
+	\includegraphics[scale=0.32]{figofhr} 
+	\end{column}
+	\begin{column}{0.48\textwidth} \begin{itemize}
+			\item Terminate study for superiority if $HR \leq 0.69$ at interim analysis
+			\item Terminate study for futility if $HR \geq 0.97$ at interim analysis
+			\item Continue study if $ 0.69 < HR < 0.97 $ at interim analysis
+			\item Claim efficacy if $HR \leq 0.84$ after final analysis
+			\item Required number of events increases (from 507) to 520
+		\end{itemize}
+	\end{column}
+\end{columns}
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{GSD with O'Brien-Fleming Bounds}
+\begin{table}[ht]
+	\centering\small
+	\begin{tabular}{llrr}
+		\hline
+		Analysis & Value & Efficacy & Futility \\ 
+		\hline
+		IA 1: 50\% & Z & 2.9626 & 0.2670 \\ 
+		N: 626 & p (1-sided) & 0.0015 & 0.3947 \\ 
+		Events: 260 & HR at bound & 0.6923 & 0.9674 \\ 
+		Month: 36 & P(Cross) if $H_{0}$ true (HR=1) & 0.0015 & 0.6053 \\ 
+		& P(Cross) if $H_{1}$ true (HR=0.75) & 0.2604 & 0.0200 \\ 
+		\hline
+		Final & Z & 1.9686 & 1.9686 \\ 
+		N: 736 & p (1-sided) & 0.0245 & 0.0245 \\ 
+		Events: 520 & HR at bound & 0.8413 & 0.8413 \\ 
+		Month: 60 & P(Cross) if $H_{0}$ true (HR=1) & 0.0243 & 0.9757 \\ 
+		& P(Cross) if $H_{1}$ true (HR=0.75) & 0.9000 & 0.1000 \\ 
+		\hline
+	\end{tabular}
+	\label{tab4}
+\end{table}
+\begin{itemize}
+	\item Approx. 26\% chance to claim superiority at IA if therapy is efficacious 
+	\item Approx. 61\% chance to claim futility at IA if therapy is not efficacious 
+	\item Duration of study reduced to 36 months if either superiority or futility is claimed at IA
+\end{itemize}
+	\end{frame}	
+	
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Pocock vs O'Brien-Fleming Bounds}
+\begin{table}[ht]
+	\renewcommand{\arraystretch}{1.25}
+	\centering
+	\begin{tabular}{ccc}
+ Design Parameters & Pocock & O'Brien-Fleming\\ 
+ \hline
+ HR bounds at IA & (0.79,\ 0.89) & (0.69,\ 0.97) \\
+ $\alpha$ spending at IA & 0.0155 & 0.0015 \\
+ Pr(stop for superiority) at IA & 66\% & 26\% \\
+ Pr(stop for futility) at IA & 85\% & 61\% \\
+ Events/Sample Size & 637 / 902 & 520 / 736 \\ 
+ \hline		
+\end{tabular}
+\end{table}	
+\begin{itemize}
+	\item Pocock bounds spends more $\alpha$ at IA , thus more aggressive to claim superiority/futility 
+	\item O'Brien-Fleming bounds is more conservative in claiming efficacy/futility at IA, reserving more $\alpha$ for final analysis
+	\item O'Brien-Fleming bounds requires fewer event/sample size than that of Pocock bounds 
+\end{itemize}
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Flexible GSD with Spending Function}
+\begin{columns}
+	\begin{column}{0.48\textwidth}
+		\includegraphics[scale=0.32]{hsdsf} 
+	\end{column}
+	\begin{column}{0.48\textwidth}	
+	\begin{itemize}
+		%\item Pocock and O'Brien-Fleming bounds require (approximately) equal stage size
+		\item Balance of aggressive/conservative IA
+		\item Spending $\alpha$ as a function of the observed information levels
+		\item Interim analysis may occur at any times with spending function
+		\item Number of interim analyses may change
+		\item Operational and logistical restrictions
+	\end{itemize}
+	\end{column}
+\end{columns}
+	\note{Administratively it is convenient to schedule interim analyses at fixed calendar times, but if patients are recruited at an uneven rate, the number of new observations between analyses will vary.}
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}<presentation:0>
+	\frametitle{GSD with Spending Function}
+\begin{itemize}
+	\item Pocock and O'Brien-Fleming bounds require (approximately) equal group size
+	\item Preferred interim analysis may occur at different times
+	\item Number of interim analyses may change
+	\item Spending the Type I error as a function of the observed information levels
+	\begin{itemize}
+		\item Kim-DeMets (power) spending function
+		\item Hwang-Shih-DeCani spending function
+		\item Exponential spending function
+		\item \ldots \ldots
+	\end{itemize}
+	\item Similarly, spending Type II error as a function of the observed information levels 	
+\end{itemize}
+\note{Administratively it is convenient to schedule interim analyses at fixed calendar times, but if patients are recruited at an uneven rate, the number of new observations between analyses will vary.}
+\end{frame}\addtocounter{framenumber}{-1}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}<presentation:0>
+	\frametitle{Conditional Power}
+\begin{itemize}
+	\item The probability of rejecting null hypothesis during the rest of the trial based on accumulated data at interim analysis
+	\item Futility index is the conditional probability of accepting the null hypothesis
+	\item Commonly used for monitoring an ongoing trial, maybe used for sample size re-estimation
+	\item A useful concept for communicating with clinical investigator
+\end{itemize}
+\end{frame}\addtocounter{framenumber}{-1}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Conditional Power}
+Given a normal test statistic from IA, the conditional power curves under observed effect size (ES), $H_{0}$ and  $H_{1}$
+\begin{columns}
+	\begin{column}{0.48\textwidth}
+		\includegraphics[scale=0.32]{condpower.pdf} 
+	\end{column}
+	\begin{column}{0.48\textwidth}	
+		\begin{itemize}
+			\item Probability of rejecting $H_{0}$ (claim efficacy) during the rest of the trial based on accumulated data at IA
+			\item Commonly used for monitoring an ongoing trial
+			\item Maybe utilized for sample size re-estimation
+		\end{itemize}
+	\end{column}
+\end{columns}	
+\end{frame}
+%----------- slide --------------------------------------------------%
+\subsection{Sample Size Re-estimation (SSR)}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Sample Size Re-estimation}
+	\begin{figure}
+		\begin{center}
+			\includegraphics[width=0.95\textwidth,height=0.70\textheight,keepaspectratio]{promising.jpg}
+			\footnote{Cytel Presentation (2012)}
+		\end{center}
+	\end{figure}	
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Sample Size Calculation}
+\begin{itemize}
+	\item Sample size calculation based on early phase trial results or historical data at the design stage \begin{itemize}
+	  \item A clinically meaningful effect size
+	  \item Variability associated with the effect size (and other nuisance parameters)
+	\end{itemize}
+	\item What if the effect size and/or the associated variability were incorrectly specified in the NSCLC trial? \begin{itemize}
+	\item If $OS_{ctrl}=15$ months and $OS_{trt}=20$ months (still HR=0.75)
+	\item \textcolor{blue}{number of event 507, sample size 795 to achieve 90\% power}
+	\item If $OS_{ctrl}=12$ months and $OS_{trt}=15$ months (HR=0.80)
+	\item \textcolor{blue}{number o event 844, sample size 1300 to achieve 90\% power}
+   \end{itemize}
+\end{itemize}
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Sample Size Re-estimation}
+ Can we plan a sample size re-estimation after interim analysis to overcome under-power or over-power in initial design of the NSCLC trial? \begin{itemize}
+ 	\item If the study is under-powered based on interim analysis, increase sample size
+ 	\item If the study is over-powered based on interim analysis, reduce sample size (though rarely done)
+ \end{itemize}
+ 
+ \textcolor{blue}{Solution: Sample size re-estimation after interim analysis}
+ \begin{itemize}
+	\item N-adjusted clinical trial design (straightforward)
+	\item Integrated with group sequential design (complex)
+    \item Types of sample size re-estimation based on interim analysis \begin{itemize}
+       \item Blinded
+       \item Unblinded
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Blinded SSR for NSCLC Trial}
+Consider to modify the classic design for NSCLC trial to a sample size re-estimation design with 
+\begin{itemize}
+  \item Sample size re-estimation after an interim analysis at 50\% information (i.e. number of events)
+  \item Interim analysis is blinded without any knowledge of treatment assignment
+  \item Interim analysis is not intended for superiority or futility
+  \item Significance level does not need to be adjusted for blinded interim analysis
+\end{itemize}
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Blinded SSR for NSCLC Trial}
+	\begin{itemize}
+		\item Specified maximum sample size inflation was 100\%
+		\item Assumed enrollment overrun at interim analysis was 25 patients
+		\item Observed unblinded median $OS = 17.5$ months at the interim analysis 
+		\item A heuristic calculation \vspace{8pt}
+		\begin{centering}
+		\begin{tabular}{cccc}
+			Stage & IA & FA & SSR \\ \hline
+			No. of Events & 254 & 507 & 507 \\
+			Sample Size & 359 & 718 & 794 \\
+			Overrun & 25 & 0 & 0 \\ \hline
+		\end{tabular}
+		\end{centering}
+		\item Hence, blinded SSR suggest to increase sample size (initial design) by $794-718=76$ patients for final analysis (FA)
+	\end{itemize}
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Unblinded SSR for NSCLC Trial}
+	\begin{itemize}
+		\item May provide more accurate sample-size estimation based on the estimated effect size at interim analysis
+		\item Bias results from knowledge of observed effect size at interim analysis
+		\item Statistical approaches to control FWER \begin{itemize}
+			    \item Combination test
+				\item Conditional error function
+				\item Conditional power (CP)
+			\end{itemize}
+	\end{itemize}
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{GSD with Unblinded SSR}
+\begin{table}[ht]
+	\caption{Asymmetric two-sided group sequential design with non-binding futility bound, sample size 833. Efficacy bounds derived using a HSD spending function with gamma = -4. Futility bounds derived using a HSD spending function with gamma = 1.} 
+	\label{tab5}
+		\centering\small
+	\begin{tabular}{llrr}
+		\hline
+		Analysis & Value & Efficacy & Futility \\ 
+		\hline
+		IA 1: 50\% & Z & 2.7500 & 0.9316 \\ 
+		N: 417 & p (1-sided) & 0.0030 & 0.1758 \\ 
+		& HR at bound & 0.7257 & 0.8971 \\ 
+		& P(Cross) if HR=1 & 0.0030 & 0.8242 \\ 
+		& P(Cross) if HR=0.75 & 0.3889 & 0.0622 \\ 
+		\hline
+		Final & Z & 1.9811 & 1.9811 \\ 
+		N: 833 & p (1-sided) & 0.0238 & 0.0238 \\ 
+		& HR at bound & 0.8493 & 0.8493 \\ 
+		& P(Cross) if HR=1 & 0.0211 & 0.9789 \\ 
+		& P(Cross) if HR=0.75 & 0.9000 & 0.1000 \\ 
+		\hline
+	\end{tabular}
+\end{table}
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{GSD with Unblinded SSR}
+\begin{itemize}
+	\item Maximum sample size inflation is specified as 100\%
+	\item Assumed enrollment overrrun at IA is 25 patients
+	%\item Fixed design sample size is 718
+	\item Promising zone in CP interval $(0.36, 0.9)$ where SSR to be conducted
+\end{itemize}	
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{GSD with Unblinded SSR}
+	%	\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.80\textwidth,height=0.80\textheight,keepaspectratio]{ssr.pdf}
+	\end{center}
+	%	\end{figure}	
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{GSD with Unblinded SSR}
+Based on the GSD with interim analysis for superiority and futility \begin{itemize}
+	\item Futility -- Stop after interim analysis with actual sample size of 417 
+	\item Superiority -- Stop after interim analysis with actual sample size of 417
+\end{itemize}
+
+Otherwise, based on the conditional power at the interim analysis,
+\begin{itemize}
+	\item CP $< 0.36$ \textcolor{red}{unfavorable} -- Continue the study after interim analysis without SSR, sample size is still 833
+	\item CP $\in [0.36, 0.9]$ \textcolor{blue}{promising zone}  -- Increase sample size $833 < N^{*} \leq 833\times 2=1666$ 
+	\item CP $> 0.9$ \textcolor{green}{favorable} -- Continue the study after interim analysis without SSR, sample size is still 833
+\end{itemize}	
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Blinded vs. Unblinded SSR}
+\begin{table}[ht]
+	\renewcommand{\arraystretch}{1.25}
+	\centering
+	\begin{tabular}{ccc}
+		Design Parameters & Blinded & Unblinded		\\ \hline
+		FWER Control & No adjustment & Adjustment \\
+		Stat Methods & Straightforward & Complex \\		
+		Implementation & In-house & External \\ 
+		FDA guidance & Well-understood & Less well-understood \\\hline
+	\end{tabular}
+\end{table}	
+\end{frame}
+
+
+%----------- slide --------------------------------------------------%
+\begin{frame}<presentation:0>
+	\frametitle{SSR Summary}
+Pros
+	\begin{itemize}
+		\item Can decide to alter trial size based on partial data or new, external information
+		\item Address uncertainty at the design stage
+		\item Offers flexibility and reduce upfront resource commitment
+		\end{itemize}
+Cons \begin{itemize}		
+		\item Methods used to adapt must be carefully chosen, regulatory scrutiny over methods and partial unblinding, 
+		\item May not improve efficiency over group sequential design
+		\item Renegotiate budget and request additional drug supply when an increase in sample size is necessary
+	\end{itemize}
+\end{frame}\addtocounter{framenumber}{-1}
+%----------- slide --------------------------------------------------%
+
+\section{Practical Considerations}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Regulatory Guidelines}
+	\begin{itemize}  
+		\item PhRMA (2006) -- Adaptive designs in clinical drug development - an executive summary of the PhRMA working group
+		\item EMA (2007) -- Reflection paper on methodological issues in confirmatory clinical trials planned with an adaptive design
+		\item FDA (2010) -- Guidance for the use of Bayesian statistics in medical device clinical trials
+		\item \textcolor{purple}{FDA (2010) -- Adaptive design clinical trials for drugs and biologics} 
+		\item FDA (2015) -- Adaptive designs for medical device clinical studies
+	\end{itemize}  
+	
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{FDA \textcolor{red}{Draft} Guideline 2010}
+	\begin{itemize}  
+		\item Distributed in February, 2010, expect to publish final document in 2017
+		\item Endorsed by both CDER and CBER for drugs and biologics
+		\item Well-understood designs \begin{itemize}
+			\item Group sequential design
+			\item Sample size re-estimation with blinded interim analysis
+		\end{itemize}
+		\item Less well-understood designs \begin{itemize}
+			\item Adaptive dose-selection, sample size re-estimation with unblinded interim analysis, adaptive randomization, adaptive population, endpoint selection, \ldots\ \ldots
+		\end{itemize}
+	\end{itemize} 	
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Challenges}
+	\begin{itemize}
+		\item Requirements of pre-specified vs. unplanned adaptations
+		\item Timing of interim analysis vs. patient accrual
+		\item Time and efforts in designing a complex adaptive design
+	\end{itemize}
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Operations}
+	\begin{itemize}
+		\item Early interaction with FDA
+		\item Extensive simulation studies for evaluation
+		\item Documentation in protocol and SAP
+		\item Available software and/or packages
+	\end{itemize}
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}<presentation:0>
+	\frametitle{Resources}
+	\begin{itemize}
+		\item Statistical literatures
+		\item PROC SEQDESIGN and PROC SEQTEST by SAS
+       \item nTrim by Statistical Solutions 
+		\item EAST \texttt{Adapt} add-on package by Cytel
+		\item Adaptive design packages (such as gsDesign) in R
+		\item ADDPLAN by ICON
+	\end{itemize}
+\end{frame}\addtocounter{framenumber}{-1}
+%----------- slide --------------------------------------------------%
+\begin{frame}<presentation:0>
+	\frametitle{Operation}
+	\begin{itemize}
+		\item Internal: Eli Lilly, Novartis method/simulation group
+		\item External: Berry Consultants, Cytel
+	\end{itemize}
+\end{frame}\addtocounter{framenumber}{-1}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+  \frametitle{Summary}
+\begin{itemize}
+  \item Not intended for adaptations due to poor planning in design stage
+  \item Improves efficiency when used appropriately
+  \item Currently more acceptable in early-phase drug development when information is limited
+  \item Important to communicate with clinical colleagues and FDA
+\end{itemize}
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{References}
+\begin{itemize}
+\item Jennison and Turnbull (2000) \emph{Group Sequential Methods with Applications to Clinical Trials}, Chapman \& Hall 
+
+\item Chang (2008) \emph{Adaptive Design Theory and Implementation using SAS and R},  Chapman \& Hall 
+
+\item Mehta and Pocock (2009) \emph{Adaptive increase in sample size when interim results are promising: a practical guide with examples}, Stat in Medicine
+
+\item FDA draft guidance (2010) \emph{Adaptive design clinical trials for drugs and biologics}
+
+\item Anderson (2014) R package \emph{gsDesign: Group Sequential Design}
+
+\end{itemize}
+	
+\end{frame}
+
+%----------- back up slide --------------------------------------------------%
+\appendix
+\begin{frame}
+	\frametitle{Adaptive Dose-Finding Design}
+	\begin{figure}
+		\begin{center}
+			\includegraphics[width=1.0\textwidth,height=0.75\textheight,keepaspectratio]{3488-PB5-R1.png}
+			\footnote[]{Figure 3. of Braun (2014) Chinese Clinical Oncology}
+		\end{center}
+	\end{figure}
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Adaptive Randomization Design}
+	\begin{figure}
+		\begin{center}
+			\includegraphics[width=0.9\textwidth,height=0.75\textheight,keepaspectratio]{4210-PB4-R1.png}
+			\footnote[]{Figure 2. of Zang (2014) Chinese Clinical Oncology}
+		\end{center}
+	\end{figure}	
+\end{frame}
+
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Drop-Loser Design}
+	\begin{figure}
+		\begin{center}
+			\includegraphics[width=0.9\textwidth,height=0.75\textheight,keepaspectratio]{seamless-phase-II-phase-III-v1_EN.png}
+			\footnote[]{Figure 3. of EUPATI (2015)}
+		\end{center}
+	\end{figure}	
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Biomarker-Adaptive Design}
+	\begin{figure}
+		\begin{center}
+			\includegraphics[width=0.9\textwidth,height=0.7\textheight,keepaspectratio]{nrd3651-i3.jpg}
+			\footnote[]{Figure 5. of Kelloff (2012)}
+		\end{center}
+	\end{figure}	
+\end{frame}
+%----------- slide --------------------------------------------------%
+\begin{frame}
+	\frametitle{Bayesian Design}
+	\begin{figure}
+		\begin{center}
+			\includegraphics[width=1.0\textwidth,height=1.2\textheight,keepaspectratio]{beyond-traditional-designs-in-early-drug-development-5-728.jpg}
+			\footnote[]{Spiegelhalter (1999)}
+		\end{center}
+	\end{figure}
+\end{frame}
+%----------- slide --------------------------------------------------%
+%\nocite{*}
+%\begin{frame}[allowframebreaks]{Key References}
+%\def\newblock{\hskip .11em plus .33em minus .07em}
+%\bibliographystyle{plain}
+%\bibliographystyle{asa}
+%\bibliography{I:/consult/research/reference/latex/ctd20111010}
+%\bibliography{ctd20111010}
+%\end{frame}
+\end{document}
+

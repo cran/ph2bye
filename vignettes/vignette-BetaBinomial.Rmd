@@ -1,0 +1,313 @@
+---
+title: "Bayesian design using Beta-binomial model for single-arm clinical trials"
+author: "Yalin Zhu"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+header-includes: \usepackage{animate}
+---
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { 
+      equationNumbers: {
+ 
+            autoNumber: "AMS",
+            formatNumber: function (n) {return '1.'+n}
+      } 
+  }
+});
+</script>
+
+# Description
+
+The purpose of a phase I trial is to study the drug's toxicity in humans and to identify the 'best' dose to be used (this is usually the highest dose which does not result in excessive toxicity). Following this, a phase II trial using this 'best' dose is then conducted. The goal in such a trial is to assess the effacacy of the drug (often demonstrated by using tumour response as the indicator) to determine if it should be further tested in a large-scale randomized phase III trial.
+
+
+Phase II clinical trials thus play an important role in the development and testing of a
+new drug. The main goal of a phase II trial is not to obtain a precise estimate of the response rate of the new drug, but rather to accept or reject the drug for further testing in a phase III trial. A commonly used primary endpoint in phase II cancer clinical trials is the clinical response to a treatment, which is a binary endpoint defined as the patient achieving
+complete or partial response within a predefined treatment course. In the early phase II development of new drugs, most trials are open label, single-arm studies, while late phase II trials tend to be multiarm, randomized studies.
+
+Nevertheless, the analysis of the trial results typically include the obtaining of an estimate of the true response proportion, along with the associated 95% (frequentist) confidence
+interval. Such an analysis does not always answer the question of interest to the investigator.
+For example, the investigator might wish to know the probability that the true response proportion exceeds the prespecified target value, or he may wish to identify the (credible) interval that
+has a 95% probability of containing the true response proportion (this is not the same as the 95% frequentist confidence interval). Such questions can be answered using a Bayesian approach.
+With a Bayesian approach, we can obtain the posterior probability distribution of the true response proportion. This allows us to compute the probability that the response proportion falls within any prespecified region of interest, including the region above the target proportion. The bayesian credible interval is the interval that has a 95% probability of containing the true response proportion. 
+A Bayesian design also allows for the formal incorporation of relevant information from other sources of evidence in the monitoring and analysis of the trial.
+
+In this project, we use Beta-binomial conjugate to develop some bayesian deisgn methods. First of all, we explore what the Bayesian prior and posterior distribution looks like. Then we explore single-arm design methods using posterior probability and predictive probability. Some R functions and web applications are developed as well.
+
+
+
+# Prior Elicitation and Posterior Construction
+
+A strength of Bayesian design and analysis is the ability to formally incorporate available information. But choosing a prior distribution requires careful consideration and work. This aspect of the Bayesian approach is more art than science. Several meetings between clinical investigators and statisticians may be necessary for assembling, evaluating, and quantifying the evidence based on literature or prior experience. In the process of selecting a prior distribution, the statistician should evaluate its sensitivity on the design's operating characteristics. Using a non-informative prior may be appropriate. Such a prior imitates a frequentist approach at the analysis stage but does not take existing information into consideration. And because a non-informative prior is artificial, it can lead to a poor design by overreacting to early results. When incorporating historical information into the prior, we almost always down-weight it in comparison to data collected in the actual trial, as described above.
+
+
+For a phase II single-arm trial,  suppose our goal is to evaluate the *response rate* $p$ for a new drug by testing the hypothesis $H_0: p \le p_0$ versus $H_1: p \ge p_1 = p_0 + \delta$, which implies $p>p_0$. We assume that the prior distribution of the response rate follows a Beta distribution, 
+
+$$p \sim Beta(a, b).$$
+
+In the Bayesian methods, the $p$ is regarded as a random variable (which is fixed parameter for frequentist). The quantity $\dfrac{a}{a + b}$ and $\dfrac{ab}{(a+b)^2(a+b+1)}$
+gives the prior mean and variance, while the magnitude of $a + b$ indicates how informative the prior is. Since the quantities **$a$** and **$b$** can be considered as the
+numbers of effective prior **responses** and **non-responses**, respectively, $a+b$
+can be thought of as a measure of prior precision: the larger this sum, the
+more informative the prior and the stronger the belief it contains.
+
+## Choose the prior distribution and parameters
+
+Let us look into the beta-binomial bayesian frame. First of all, we need to select parameter of $Beta(a,b)$. There are several methods to choose the prior parameter in the exsiting literatures. 
+
+### Simply choose a non-inormative prior. 
+
+For example, $Beta(1,1)$ (equivalent to $U niform(0,1)), since this kind of prior provides very little information, it is also called vague prior. 
+
+We can look at how the posterior proabability changes with more patients enrolled (prior updated) under the $Beta(1,1)$ prior. 
+
+### Plot the prior, likelihood and posterior density functions
+
+We develop an R function which not only plots the posterior tendency with updating previous posterior as a new prior, but also provide a full list of inference information (indlucing outcome cohort data, posterior mean, credible interval)  
+
+```{r tidy=TRUE}
+source("animation_update.R")
+``` 
+
+After CSCC patients receiving the cancer treatment neo-adjuvant therapy and surgery, consider the single primary endpoint: pathological complete response ($pCR$) with the following hypotheses:
+$$H_0: pCR \le 15\% \quad versus \quad H_1: pCR > 15\%$$
+If the study sequtially monitors the prior and posteror, we can plot the distributions and likelihood as animations with the simulated data. 
+
+```{r  fig.show='animate', out.width = '7in'}
+BB.sim(M=20,N=1,p=0.15)
+```
+
+We can observe after 10 patients enrolled, the difference between posterior and true response rate reduced to a stable level below 3%. 
+
+We can also monitor the patients by cohort. Simulate each cohort contains 5 patients, the results are shown as follows:
+
+```{r  fig.show='animate', out.width = '7in'}
+BB.sim(M=10,N=5,p=0.15)
+```
+
+After only 4 cohort (20 patients) enrolled, the difference between posterior and true response rate reduced to a stable level below 3%. 
+
+### Mean and Variance prior 
+
+Based on the mean $\mu$ and the variance $\sigma^2$, we can derive the prior parameter of $Beta(a,b)$ distribution with $$a=\mu\left\{\dfrac{\mu(1-\mu)}{\sigma^2}-1\right\}$$ and $$b=(1-\mu)\left\{\dfrac{\mu(1-\mu)}{\sigma^2}-1\right\}.$$ 
+
+**Notations**
+
+$\mu_0$: mean of prior response probability; 
+
+$\sigma_0$: standard deviation of prior response probability;
+
+$n$: total sample size; 
+
+$x$: number of response subjects;
+
+
+For the mean and variance prior, We reproduce the arsenic trioxide trials example [@zohar2008bayesian], with MM and APL data. The results are shown as follows. 
+
+```{r tidy=TRUE}
+source("simple_design.R")
+```
+
+
+```{r tidy=TRUE}
+## create MM data and set the prior mean and variance
+MM.r = rep(0,12); MM.mean = 0.1; MM.var = 0.0225
+post.mean(mu0 = MM.mean, sigma0 = sqrt(MM.var),r=MM.r)
+
+## create APL data and set the prior mean and variance
+APL.r <- c(0,1,0,0,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1)
+APL.mean = 0.3; APL.var = 0.0191
+post.mean(mu0 = APL.mean, sigma0 = sqrt(APL.var),r=APL.r)
+
+```
+
+We also create R function to plot animations for the MM and APL data
+
+```{r fig.show='animate', out.width = '7in'}
+MM.r <- rep(0,12)
+BB.plot(0.3,2.7,r=MM.r)
+```
+
+```{r fig.show='animate', out.width = '7in'}
+APL.r <- c(0,1,0,0,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1)
+BB.plot(3,7,r=APL.r)
+```
+
+The results is identical with original paper's results. 
+
+
+## A Web application for choosing prior and simulating posterior distributions
+For users' convenience, we also develop a web application to provide the prior information and posterior distributions inferences. Please refer to the following link: https://allen.shinyapps.io/Beta_Bayes_Prior/
+
+The interface is display in the Figure 1:
+
+![Display of the web application.](demo.png)
+
+**Remark** Credible intervals are not unique on a posterior distribution. There are two main methods to define a suitble credible interval:
+
+  *  **Equal-tailed (ET)** interval is  the interval where the probability of being below the interval is as likely as being above it. This interval will include the median. 
+  *  **Highest Posterior Density (HPD)**  interval is the narrowest interval, which for a unimodal distribution will involve choosing those values of highest probability density including the mode. 
+
+How to choose the credible interval is also our interest.
+
+
+# Single-arm Design Studies
+We mainly want to determin the following quantities:
+
+* Sample Size Determination ($N_{max}$)
+* Stopping Boundary ($\theta_L$, $\theta_U$)
+
+
+
+We consider the following two bayesian methods: Posterior Probability (abbr. "PostP") and Predictive Probability (abbr. "PredP"). For Phase IIA (earlier) trials, we prefer to allow early stopping due to futility, but not due to efficacy, and final stop due to efficacy or pre-spicified $N_{max}$.
+
+
+
+
+## Sequential Stopping based on Posterior Probability design (`PostP`)
+
+A simple and practical method is to use the posterior probability to monitor the trials. Dring each trial, the data are monitored continuously, and decisions are made adaptively until the pre-specified maximum sample size $N_{max}$ is reached.[@thall1994practical] 
+
+Suppose we have decieded a maximum number of accrued patients $N_{max}$, and assume that the number of responses $X$ among the current $n$ patients ($n \le N_{max}$) follows a $Binomial(n, p)$ distribution. By the conjugacy of the beta prior and binomial likelihood, the posterior distribution of the response rate $p|X=x$ is still a beta distribution,
+
+$$p|x \sim Beta(a + x, b + n - x).$$
+
+Then the posterior probability  
+$PostP=Pr(p>p_0|x)$ can be used to decide the sample size and stopping boundary.
+
+### Algorithm 1
+  
+  * **Step 1:** Specified the upper and lower probability cutoffs $\theta_U$ and $\theta_L$. Typically, $\theta_U \in [0.9,1]$ and $\theta_L \in [0,0.05]$, set true null response rate $p_0$ a pre-specified value. 
+  * **Step 2:** Let $$S_U =\min \{x \in \mathbb{N}:  PostP > \theta_U \}$$ and $$ S_L =\max \{x \in \mathbb{N}:  PostP < \theta_L \}$$ be the upper and lower decision boudries based on the number of observed responses.
+  * **Step 3:** Make decisions after observing another $x$ responses out of $n$ patients:
+    + If $x \ge S_U$, then stop the trial for efficacy; (could be ignored for futility only) 
+    + if $x \le S_L$, then stop the trial for futility; 
+    + otherwise, continue the trial until $N_{max}$ reached.
+
+Although the stopping rule requires that the trial be terminated to declare the experimental drug promising if $x \ge S_U$, investigators rarely stop the trial in such a case so that more patients are allowed to benefit from the "good" drug. Therefore, the stopping rule for superiority of the drug is often not implemented in a single-arm phase II trial.
+  
+### the cancer treatment neo-adjuvant therapy and surgery with single pCR endpoint using `PostP` method 
+
+First of all, we apply Simon's two-stage design:
+```{r}
+library(clinfun)
+ph2simon(pu=0.15, pa=0.30, ep1=0.05, ep2=0.10, nmax=100)
+```
+
+
+Then we apply the PostP bayesian design by using the vague prior $Beta(1,1)$. (In the future, we can use informative priors)
+```{r}
+source("postp.R")
+PostP.design(type = "futility", nmax=100, a=1, b=1, p0=0.15, delta=0.15, theta=0.05)
+PostP.design(type = "efficacy", nmax=100, a=1, b=1, p0=0.15, delta=0.15, theta=0.9)
+```
+
+Theoretically, We can choose any one row as the early stopping. Here we can compare the Simon's Optimal design result, and select r1/n1=5/32 as the stopping rule for futility, r/n=17/81 as final stop for efficacy. (or r1/n1/r/n = 6/36/14/64 sompared with Simon's Minimax).
+
+We can also use Jeffrey prior: $Beta(0.5,0.5)$.
+
+```{r}
+PostP.design(type = "futility", nmax=100, a=0.5, b=0.5, p0=0.15, delta=0.15, theta=0.05)
+PostP.design(type = "efficacy", nmax=100, a=0.5, b=0.5, p0=0.15, delta=0.15, theta=0.9)
+```
+
+
+
+
+
+## Predictive Probability Design (`PredP`)
+
+The predictive probability approach looks into the future objectives based on the current observed data to project whether a positive conclusion at the end of study is likely or not, and then makes a sensible decision at the present time accordingly.[@lee2008predictive]
+
+Let $Y$ be the number of responses in the rest of $m = N_{max} -n$ future
+patients. Suppose our design is to declare efficacy if the posterior probability of $p$ exceeding some pre-specified level $p_0$ is greater than some threshold $\theta_T$ . Marginalizing $p$ out of the binomial likelihood, it is well known that Y|X=x
+follows a beta-binomial distribution, i.e. $Y|x \sim Beta-Binomial(m, a + x, b +
+n - x)$. 
+
+By the end of the trial, suppose we observe additional $Y = y$ response, then the posterior distribution including future future y patient  $p|(X = x, Y = y)$ is also
+$$Beta(a+x+y; b+N_{max}-x-y)$$. The predictive probability (PredP) of trial
+success can then be calculated as follows. Denote the posterior probability with the future data by $B_y = Pr(p > p0 | x, Y = y)$ and $I_y = I(B_y > \theta_T )$, then we have
+
+$$ \begin{aligned} PredP & = Pr_{Y|x} \{Pr(p>p_0|x, Y) \ge \theta_T \} \\
+        & = E \{ I[Pr(p>p_0|x, Y) \ge \theta_T] \Big| x  \}\\
+        & = \sum\limits_{y=0}^{m}  I[Pr(p>p_0|x, Y=y) \ge \theta_T] \times Pr(Y=y|x)\\
+        & = \sum\limits_{y=0}^{N_{max} -n}  I_y \times Pr(Y=y|x). \label{predp}
+        \end{aligned} $$ 
+
+Note that if there were no indicator function in \ref{predp}, the PredP simply reduces to the
+PostP after averaging out the unobserved Y. 
+
+$$\sum\limits_{y=0}^{N_{max} -n}  Pr(p>p_0|x, Y=y) \times Pr(Y=y|x) = Pr(p>p_0|x)$$
+
+Then we can decide the sample size and stop boundary by using the following algorithm: 
+
+### Algorithm 2
+  
+  * **Step 1:** Specified the upper and lower probability cutoffs $\theta_U$ and $\theta_L$, typically, $\theta_U \in [0.9,1]$ and $\theta_L \in [0,0.05]$. Specified cutoff $\theta_T$ for the future $y$ patients, typically, $\theta_T \in [0.8,1]$. Set true null response rate $p_0$ a pre-specified value. 
+  * **Step 2:** Given $x$ obwervations, let $$S_U =\min \{x+y \in \mathbb{N}:  PredP > \theta_U \}$$ and $$ S_L =\max \{x+y \in \mathbb{N}:  PredP < \theta_L \}$$ be the upper and lower decision boudries based on the number of observed responses.
+  * **Step 3:** Make decisions after observing another $x$ responses out of $n$ patients:
+    + If $x \ge S_U$, then stop the trial for efficacy (could be ignored for futility only); 
+    + if $x \le S_L$, then stop the trial for futility; 
+    + otherwise, continue the trial until $N_{max}$ reached.
+
+### the cancer treatment neo-adjuvant therapy and surgery with single pCR endpoint using `PostP` method 
+
+Now we can apply the PostP bayesian design to the the cancer treatment pCR case, still use the vague prior $Beta(1,1)$.
+
+```{r}
+source("predp.R")
+PredP.design(type = "futility", nmax=100, a=1, b=1, p0=0.15, delta=0.15, theta=0.05)
+PredP.design(type = "efficacy", nmax=100, a=1, b=1, p0=0.15, delta=0.15, theta=0.9)
+```
+
+Based on the Simon's Optimal design result, we can select r1/n1=5/24 as the stopping rule for futility, r/n=17/71 as final stop for efficacy. (or r1/n1/r/n = 6/28/14/55 sompared with Simon's Minimax). Compared with Simon's design and PostP design, under the same stopping boudaries, PredP design allows smaller sample sizes. 
+
+
+Using Jeffrey prior $Beta(0.5,0.5)$ the results shown as follws:
+
+```{r}
+PredP.design(type = "futility", nmax=100, a=0.5, b=0.5, p0=0.15, delta=0.15, theta=0.05)
+PredP.design(type = "efficacy", nmax=100, a=0.5, b=0.5, p0=0.15, delta=0.15, theta=0.9)
+```
+
+### MM & APL data examples for PostP and PredP design
+
+We also used the MM & APL data to illustrate two bayesian methods by animations.
+
+Suppose we want to monitor the patients one-by-one, that is, the patient outcome follows $Bernoulli(p)$, and the stopping boundary can be deciede based on updating posteriors. We can create the animation plots to search the stopping boundary by taking the MM and APL data examples.
+```{r  tidy=TRUE, fig.show='animate', out.width = '7in'}
+## Test MM data from the above examples
+bayes.desgin(mu0=MM.mean,sigma=sqrt(MM.var),r=MM.r,stop.rule="futility",p0=0.1,ymax=18)
+```
+
+```{r  tidy=TRUE, fig.show='animate', out.width = '7in'}
+## Test APL data from the above examples
+bayes.desgin(mu0=APL.mean,sigma=sqrt(APL.var),r=APL.r,stop.rule="efficacy",p0=0.1, ymax=4.5)
+```
+
+
+
+
+
+
+
+
+# Summary and Future Works 
+
+The frameworks of both *PostP* and *PredP* methods allow the researcher to monitor the trial continously or by any cohort size. Compared to Simon's minimax and optimal two-stage design, the PostP and PredP designs monitor the data more frequently, both two designs have a larger probability of early termination and a smaller expected sample size in the null case than Simon's. All designs have the same maximum sample size with controlled Type I and
+Type II error rates.
+
+
+We can consider $pCR$ not only binary level, but also multinomial level, then we can use **Direchlet-Multinomial** prior and similar idea to develop the single-arm design [@thall1995bayesian]. Another potential work is to extend the single primary endpoint to co-primary endpoint by using similar Bayesian idea (or hierarchical Bayesian design if the endpoint have some hierarchical structures)
+
+
+
+
+
+# References

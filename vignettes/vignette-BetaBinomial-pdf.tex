@@ -1,0 +1,1563 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\PassOptionsToPackage{usenames,dvipsnames}{color} % color is loaded by hyperref
+\hypersetup{unicode=true,
+            pdftitle={Bayesian design using Beta-binomial model for single-arm clinical trials},
+            pdfauthor={Yalin Zhu},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{{#1}}}
+\newcommand{\ImportTok}[1]{{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{{#1}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{{#1}}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{{#1}}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{{#1}}}}
+\newcommand{\BuiltInTok}[1]{{#1}}
+\newcommand{\ExtensionTok}[1]{{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{{#1}}}
+\newcommand{\RegionMarkerTok}[1]{{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{{#1}}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\NormalTok}[1]{{#1}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{Bayesian design using Beta-binomial model for single-arm clinical trials}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Yalin Zhu}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{July 25, 2016}
+
+
+\usepackage{animate}
+
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+\begin{document}
+\maketitle
+
+\section{Description}\label{description}
+
+The purpose of a phase I trial is to study the drug's toxicity in humans
+and to identify the `best' dose to be used (this is usually the highest
+dose which does not result in excessive toxicity). Following this, a
+phase II trial using this `best' dose is then conducted. The goal in
+such a trial is to assess the effacacy of the drug (often demonstrated
+by using tumour response as the indicator) to determine if it should be
+further tested in a large-scale randomized phase III trial.
+
+Phase II clinical trials thus play an important role in the development
+and testing of a new drug. The main goal of a phase II trial is not to
+obtain a precise estimate of the response rate of the new drug, but
+rather to accept or reject the drug for further testing in a phase III
+trial. A commonly used primary endpoint in phase II cancer clinical
+trials is the clinical response to a treatment, which is a binary
+endpoint defined as the patient achieving complete or partial response
+within a predefined treatment course. In the early phase II development
+of new drugs, most trials are open label, single-arm studies, while late
+phase II trials tend to be multiarm, randomized studies.
+
+Nevertheless, the analysis of the trial results typically include the
+obtaining of an estimate of the true response proportion, along with the
+associated 95\% (frequentist) confidence interval. Such an analysis does
+not always answer the question of interest to the investigator. For
+example, the investigator might wish to know the probability that the
+true response proportion exceeds the prespecified target value, or he
+may wish to identify the (credible) interval that has a 95\% probability
+of containing the true response proportion (this is not the same as the
+95\% frequentist confidence interval). Such questions can be answered
+using a Bayesian approach. With a Bayesian approach, we can obtain the
+posterior probability distribution of the true response proportion. This
+allows us to compute the probability that the response proportion falls
+within any prespecified region of interest, including the region above
+the target proportion. The bayesian credible interval is the interval
+that has a 95\% probability of containing the true response proportion.
+A Bayesian design also allows for the formal incorporation of relevant
+information from other sources of evidence in the monitoring and
+analysis of the trial.
+
+In this project, we use Beta-binomial conjugate to develop some bayesian
+deisgn methods. First of all, we explore what the Bayesian prior and
+posterior distribution looks like. Then we explore single-arm design
+methods using posterior probability and predictive probability. Some R
+functions and web applications are developed as well.
+
+\section{Prior Elicitation and Posterior
+Construction}\label{prior-elicitation-and-posterior-construction}
+
+A strength of Bayesian design and analysis is the ability to formally
+incorporate available information. But choosing a prior distribution
+requires careful consideration and work. This aspect of the Bayesian
+approach is more art than science. Several meetings between clinical
+investigators and statisticians may be necessary for assembling,
+evaluating, and quantifying the evidence based on literature or prior
+experience. In the process of selecting a prior distribution, the
+statistician should evaluate its sensitivity on the design's operating
+characteristics. Using a non-informative prior may be appropriate. Such
+a prior imitates a frequentist approach at the analysis stage but does
+not take existing information into consideration. And because a
+non-informative prior is artificial, it can lead to a poor design by
+overreacting to early results. When incorporating historical information
+into the prior, we almost always down-weight it in comparison to data
+collected in the actual trial, as described above.
+
+For a phase II single-arm trial, suppose our goal is to evaluate the
+\emph{response rate} \(p\) for a new drug by testing the hypothesis
+\(H_0: p \le p_0\) versus \(H_1: p \ge p_1 = p_0 + \delta\), which
+implies \(p>p_0\). We assume that the prior distribution of the response
+rate follows a Beta distribution,
+
+\[p \sim Beta(a, b).\]
+
+In the Bayesian methods, the \(p\) is regarded as a random variable
+(which is fixed parameter for frequentist). The quantity
+\(\dfrac{a}{a + b}\) and \(\dfrac{ab}{(a+b)^2(a+b+1)}\) gives the prior
+mean and variance, while the magnitude of \(a + b\) indicates how
+informative the prior is. Since the quantities \textbf{\(a\)} and
+\textbf{\(b\)} can be considered as the numbers of effective prior
+\textbf{responses} and \textbf{non-responses}, respectively, \(a+b\) can
+be thought of as a measure of prior precision: the larger this sum, the
+more informative the prior and the stronger the belief it contains.
+
+\subsection{Choose the prior distribution and
+parameters}\label{choose-the-prior-distribution-and-parameters}
+
+Let us look into the beta-binomial bayesian frame. First of all, we need
+to select parameter of \(Beta(a,b)\). There are several methods to
+choose the prior parameter in the exsiting literatures.
+
+\subsubsection{Simply choose a non-inormative
+prior.}\label{simply-choose-a-non-inormative-prior.}
+
+For example, \(Beta(1,1)\) (equivalent to \$U niform(0,1)), since this
+kind of prior provides very little information, it is also called vague
+prior.
+
+We can look at how the posterior proabability changes with more patients
+enrolled (prior updated) under the \(Beta(1,1)\) prior.
+
+\subsubsection{Plot the prior, likelihood and posterior density
+functions}\label{plot-the-prior-likelihood-and-posterior-density-functions}
+
+We develop an R function which not only plots the posterior tendency
+with updating previous posterior as a new prior, but also provide a full
+list of inference information (indlucing outcome cohort data, posterior
+mean, credible interval)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{source}\NormalTok{(}\StringTok{"animation_update.R"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+After CSCC patients receiving the cancer treatment neo-adjuvant therapy
+and surgery, consider the single primary endpoint: pathological complete
+response (\(pCR\)) with the following hypotheses:
+\[H_0: pCR \le 15\% \quad versus \quad H_1: pCR > 15\%\] If the study
+sequtially monitors the prior and posteror, we can plot the
+distributions and likelihood as animations with the simulated data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{BB.sim}\NormalTok{(}\DataTypeTok{M=}\DecValTok{20}\NormalTok{,}\DataTypeTok{N=}\DecValTok{1}\NormalTok{,}\DataTypeTok{p=}\FloatTok{0.15}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Prior: Beta(1,1) 
+## 
+## ======== Cohort Number: 1 ======== 
+## Observations -- Sample Size: 1(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 1(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(1,2) 
+##   Posterior Mean: 0.333,  Difference between posterior and true response rate: 0.333
+##   95% Credible Interval: (0.0126,0.842)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 2 ======== 
+## Observations -- Sample Size: 2(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 2(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(1,3) 
+##   Posterior Mean: 0.25,  Difference between posterior and true response rate: 0.25
+##   95% Credible Interval: (0.0084,0.708)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 3 ======== 
+## Observations -- Sample Size: 3(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 3(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(1,4) 
+##   Posterior Mean: 0.2,  Difference between posterior and true response rate: 0.2
+##   95% Credible Interval: (0.00631,0.602)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 4 ======== 
+## Observations -- Sample Size: 4(1)  ||  Number of Response: 1(1)  ||  Number of Failure: 3(0)
+##   Observed Response Rate: 0.25
+## Posterior: Beta(2,4) 
+##   Posterior Mean: 0.333,  Difference between posterior and true response rate: 0.0833
+##   95% Credible Interval: (0.0527,0.716)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 5 ======== 
+## Observations -- Sample Size: 5(1)  ||  Number of Response: 2(1)  ||  Number of Failure: 3(0)
+##   Observed Response Rate: 0.4
+## Posterior: Beta(3,4) 
+##   Posterior Mean: 0.429,  Difference between posterior and true response rate: 0.0286
+##   95% Credible Interval: (0.118,0.777)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 6 ======== 
+## Observations -- Sample Size: 6(1)  ||  Number of Response: 2(0)  ||  Number of Failure: 4(1)
+##   Observed Response Rate: 0.333
+## Posterior: Beta(3,5) 
+##   Posterior Mean: 0.375,  Difference between posterior and true response rate: 0.0417
+##   95% Credible Interval: (0.099,0.71)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 7 ======== 
+## Observations -- Sample Size: 7(1)  ||  Number of Response: 2(0)  ||  Number of Failure: 5(1)
+##   Observed Response Rate: 0.286
+## Posterior: Beta(3,6) 
+##   Posterior Mean: 0.333,  Difference between posterior and true response rate: 0.0476
+##   95% Credible Interval: (0.0852,0.651)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 8 ======== 
+## Observations -- Sample Size: 8(1)  ||  Number of Response: 3(1)  ||  Number of Failure: 5(0)
+##   Observed Response Rate: 0.375
+## Posterior: Beta(4,6) 
+##   Posterior Mean: 0.4,  Difference between posterior and true response rate: 0.025
+##   95% Credible Interval: (0.137,0.701)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 9 ======== 
+## Observations -- Sample Size: 9(1)  ||  Number of Response: 3(0)  ||  Number of Failure: 6(1)
+##   Observed Response Rate: 0.333
+## Posterior: Beta(4,7) 
+##   Posterior Mean: 0.364,  Difference between posterior and true response rate: 0.0303
+##   95% Credible Interval: (0.122,0.652)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 10 ======== 
+## Observations -- Sample Size: 10(1)  ||  Number of Response: 3(0)  ||  Number of Failure: 7(1)
+##   Observed Response Rate: 0.3
+## Posterior: Beta(4,8) 
+##   Posterior Mean: 0.333,  Difference between posterior and true response rate: 0.0333
+##   95% Credible Interval: (0.109,0.61)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 11 ======== 
+## Observations -- Sample Size: 11(1)  ||  Number of Response: 4(1)  ||  Number of Failure: 7(0)
+##   Observed Response Rate: 0.364
+## Posterior: Beta(5,8) 
+##   Posterior Mean: 0.385,  Difference between posterior and true response rate: 0.021
+##   95% Credible Interval: (0.152,0.651)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 12 ======== 
+## Observations -- Sample Size: 12(1)  ||  Number of Response: 4(0)  ||  Number of Failure: 8(1)
+##   Observed Response Rate: 0.333
+## Posterior: Beta(5,9) 
+##   Posterior Mean: 0.357,  Difference between posterior and true response rate: 0.0238
+##   95% Credible Interval: (0.139,0.614)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 13 ======== 
+## Observations -- Sample Size: 13(1)  ||  Number of Response: 4(0)  ||  Number of Failure: 9(1)
+##   Observed Response Rate: 0.308
+## Posterior: Beta(5,10) 
+##   Posterior Mean: 0.333,  Difference between posterior and true response rate: 0.0256
+##   95% Credible Interval: (0.128,0.581)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 14 ======== 
+## Observations -- Sample Size: 14(1)  ||  Number of Response: 4(0)  ||  Number of Failure: 10(1)
+##   Observed Response Rate: 0.286
+## Posterior: Beta(5,11) 
+##   Posterior Mean: 0.312,  Difference between posterior and true response rate: 0.0268
+##   95% Credible Interval: (0.118,0.551)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 15 ======== 
+## Observations -- Sample Size: 15(1)  ||  Number of Response: 4(0)  ||  Number of Failure: 11(1)
+##   Observed Response Rate: 0.267
+## Posterior: Beta(5,12) 
+##   Posterior Mean: 0.294,  Difference between posterior and true response rate: 0.0275
+##   95% Credible Interval: (0.11,0.524)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 16 ======== 
+## Observations -- Sample Size: 16(1)  ||  Number of Response: 5(1)  ||  Number of Failure: 11(0)
+##   Observed Response Rate: 0.312
+## Posterior: Beta(6,12) 
+##   Posterior Mean: 0.333,  Difference between posterior and true response rate: 0.0208
+##   95% Credible Interval: (0.142,0.56)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 17 ======== 
+## Observations -- Sample Size: 17(1)  ||  Number of Response: 5(0)  ||  Number of Failure: 12(1)
+##   Observed Response Rate: 0.294
+## Posterior: Beta(6,13) 
+##   Posterior Mean: 0.316,  Difference between posterior and true response rate: 0.0217
+##   95% Credible Interval: (0.133,0.535)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 18 ======== 
+## Observations -- Sample Size: 18(1)  ||  Number of Response: 5(0)  ||  Number of Failure: 13(1)
+##   Observed Response Rate: 0.278
+## Posterior: Beta(6,14) 
+##   Posterior Mean: 0.3,  Difference between posterior and true response rate: 0.0222
+##   95% Credible Interval: (0.126,0.512)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 19 ======== 
+## Observations -- Sample Size: 19(1)  ||  Number of Response: 5(0)  ||  Number of Failure: 14(1)
+##   Observed Response Rate: 0.263
+## Posterior: Beta(6,15) 
+##   Posterior Mean: 0.286,  Difference between posterior and true response rate: 0.0226
+##   95% Credible Interval: (0.119,0.491)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 20 ======== 
+## Observations -- Sample Size: 20(1)  ||  Number of Response: 6(1)  ||  Number of Failure: 14(0)
+##   Observed Response Rate: 0.3
+## Posterior: Beta(7,15) 
+##   Posterior Mean: 0.318,  Difference between posterior and true response rate: 0.0182
+##   95% Credible Interval: (0.146,0.522)
+\end{verbatim}
+
+\animategraphics[width=7in,controls,loop]{1}{vignette-BetaBinomial-pdf_files/figure-latex/unnamed-chunk-2-}{1}{20}
+
+We can observe after 10 patients enrolled, the difference between
+posterior and true response rate reduced to a stable level below 3\%.
+
+We can also monitor the patients by cohort. Simulate each cohort
+contains 5 patients, the results are shown as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{BB.sim}\NormalTok{(}\DataTypeTok{M=}\DecValTok{10}\NormalTok{,}\DataTypeTok{N=}\DecValTok{5}\NormalTok{,}\DataTypeTok{p=}\FloatTok{0.15}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Prior: Beta(1,1) 
+## 
+## ======== Cohort Number: 1 ======== 
+## Observations -- Sample Size: 5(5)  ||  Number of Response: 0(0)  ||  Number of Failure: 5(5)
+##   Observed Response Rate: 0
+## Posterior: Beta(1,6) 
+##   Posterior Mean: 0.143,  Difference between posterior and true response rate: 0.143
+##   95% Credible Interval: (0.00421,0.459)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 2 ======== 
+## Observations -- Sample Size: 10(5)  ||  Number of Response: 1(1)  ||  Number of Failure: 9(4)
+##   Observed Response Rate: 0.1
+## Posterior: Beta(2,10) 
+##   Posterior Mean: 0.167,  Difference between posterior and true response rate: 0.0667
+##   95% Credible Interval: (0.0228,0.413)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 3 ======== 
+## Observations -- Sample Size: 15(5)  ||  Number of Response: 1(0)  ||  Number of Failure: 14(5)
+##   Observed Response Rate: 0.0667
+## Posterior: Beta(2,15) 
+##   Posterior Mean: 0.118,  Difference between posterior and true response rate: 0.051
+##   95% Credible Interval: (0.0155,0.302)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 4 ======== 
+## Observations -- Sample Size: 20(5)  ||  Number of Response: 3(2)  ||  Number of Failure: 17(3)
+##   Observed Response Rate: 0.15
+## Posterior: Beta(4,18) 
+##   Posterior Mean: 0.182,  Difference between posterior and true response rate: 0.0318
+##   95% Credible Interval: (0.0545,0.363)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 5 ======== 
+## Observations -- Sample Size: 25(5)  ||  Number of Response: 5(2)  ||  Number of Failure: 20(3)
+##   Observed Response Rate: 0.2
+## Posterior: Beta(6,21) 
+##   Posterior Mean: 0.222,  Difference between posterior and true response rate: 0.0222
+##   95% Credible Interval: (0.0897,0.394)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 6 ======== 
+## Observations -- Sample Size: 30(5)  ||  Number of Response: 5(0)  ||  Number of Failure: 25(5)
+##   Observed Response Rate: 0.167
+## Posterior: Beta(6,26) 
+##   Posterior Mean: 0.188,  Difference between posterior and true response rate: 0.0208
+##   95% Credible Interval: (0.0745,0.337)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 7 ======== 
+## Observations -- Sample Size: 35(5)  ||  Number of Response: 6(1)  ||  Number of Failure: 29(4)
+##   Observed Response Rate: 0.171
+## Posterior: Beta(7,30) 
+##   Posterior Mean: 0.189,  Difference between posterior and true response rate: 0.0178
+##   95% Credible Interval: (0.0819,0.328)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 8 ======== 
+## Observations -- Sample Size: 40(5)  ||  Number of Response: 8(2)  ||  Number of Failure: 32(3)
+##   Observed Response Rate: 0.2
+## Posterior: Beta(9,33) 
+##   Posterior Mean: 0.214,  Difference between posterior and true response rate: 0.0143
+##   95% Credible Interval: (0.106,0.349)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 9 ======== 
+## Observations -- Sample Size: 45(5)  ||  Number of Response: 9(1)  ||  Number of Failure: 36(4)
+##   Observed Response Rate: 0.2
+## Posterior: Beta(10,37) 
+##   Posterior Mean: 0.213,  Difference between posterior and true response rate: 0.0128
+##   95% Credible Interval: (0.109,0.339)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 10 ======== 
+## Observations -- Sample Size: 50(5)  ||  Number of Response: 10(1)  ||  Number of Failure: 40(4)
+##   Observed Response Rate: 0.2
+## Posterior: Beta(11,41) 
+##   Posterior Mean: 0.212,  Difference between posterior and true response rate: 0.0115
+##   95% Credible Interval: (0.113,0.331)
+\end{verbatim}
+
+\animategraphics[width=7in,controls,loop]{1}{vignette-BetaBinomial-pdf_files/figure-latex/unnamed-chunk-3-}{1}{10}
+
+After only 4 cohort (20 patients) enrolled, the difference between
+posterior and true response rate reduced to a stable level below 3\%.
+
+\subsubsection{Mean and Variance prior}\label{mean-and-variance-prior}
+
+Based on the mean \(\mu\) and the variance \(\sigma^2\), we can derive
+the prior parameter of \(Beta(a,b)\) distribution with
+\[a=\mu\left\{\dfrac{\mu(1-\mu)}{\sigma^2}-1\right\}\] and
+\[b=(1-\mu)\left\{\dfrac{\mu(1-\mu)}{\sigma^2}-1\right\}.\]
+
+\textbf{Notations}
+
+\(\mu_0\): mean of prior response probability;
+
+\(\sigma_0\): standard deviation of prior response probability;
+
+\(n\): total sample size;
+
+\(x\): number of response subjects;
+
+For the mean and variance prior, We reproduce the arsenic trioxide
+trials example (Zohar, Teramukai, and Zhou 2008), with MM and APL data.
+The results are shown as follows.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{source}\NormalTok{(}\StringTok{"simple_design.R"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## create MM data and set the prior mean and variance}
+\NormalTok{MM.r =}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{12}\NormalTok{)}
+\NormalTok{MM.mean =}\StringTok{ }\FloatTok{0.1}
+\NormalTok{MM.var =}\StringTok{ }\FloatTok{0.0225}
+\KeywordTok{post.mean}\NormalTok{(}\DataTypeTok{mu0 =} \NormalTok{MM.mean, }\DataTypeTok{sigma0 =} \KeywordTok{sqrt}\NormalTok{(MM.var), }\DataTypeTok{r =} \NormalTok{MM.r)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $para.a
+## [1] 0.3
+## 
+## $para.b
+## [1] 2.7
+## 
+## $`poterior mean`
+##  [1] 0.0750 0.0600 0.0500 0.0429 0.0375 0.0333 0.0300 0.0273 0.0250 0.0231
+## [11] 0.0214 0.0200
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## create APL data and set the prior mean and variance}
+\NormalTok{APL.r <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\NormalTok{APL.mean =}\StringTok{ }\FloatTok{0.3}
+\NormalTok{APL.var =}\StringTok{ }\FloatTok{0.0191}
+\KeywordTok{post.mean}\NormalTok{(}\DataTypeTok{mu0 =} \NormalTok{APL.mean, }\DataTypeTok{sigma0 =} \KeywordTok{sqrt}\NormalTok{(APL.var), }\DataTypeTok{r =} \NormalTok{APL.r)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $para.a
+## [1] 3
+## 
+## $para.b
+## [1] 7
+## 
+## $`poterior mean`
+##  [1] 0.273 0.333 0.308 0.286 0.333 0.375 0.412 0.444 0.421 0.450 0.476
+## [12] 0.500 0.478 0.500 0.520 0.539 0.556 0.571 0.586 0.600
+\end{verbatim}
+
+We also create R function to plot animations for the MM and APL data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MM.r <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{12}\NormalTok{)}
+\KeywordTok{BB.plot}\NormalTok{(}\FloatTok{0.3}\NormalTok{,}\FloatTok{2.7}\NormalTok{,}\DataTypeTok{r=}\NormalTok{MM.r)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Prior: Beta(0.3,2.7) 
+## 
+## ======== Cohort Number: 1 ======== 
+## Observations -- Sample Size: 1(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 1(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(0.3,3.7) 
+##   Posterior Mean: 0.075
+##   95% Credible Interval: (9.48e-07,0.43)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 2 ======== 
+## Observations -- Sample Size: 2(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 2(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(0.3,4.7) 
+##   Posterior Mean: 0.06
+##   95% Credible Interval: (7.31e-07,0.353)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 3 ======== 
+## Observations -- Sample Size: 3(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 3(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(0.3,5.7) 
+##   Posterior Mean: 0.05
+##   95% Credible Interval: (5.95e-07,0.298)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 4 ======== 
+## Observations -- Sample Size: 4(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 4(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(0.3,6.7) 
+##   Posterior Mean: 0.0429
+##   95% Credible Interval: (5.01e-07,0.258)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 5 ======== 
+## Observations -- Sample Size: 5(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 5(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(0.3,7.7) 
+##   Posterior Mean: 0.0375
+##   95% Credible Interval: (4.33e-07,0.227)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 6 ======== 
+## Observations -- Sample Size: 6(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 6(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(0.3,8.7) 
+##   Posterior Mean: 0.0333
+##   95% Credible Interval: (3.81e-07,0.203)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 7 ======== 
+## Observations -- Sample Size: 7(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 7(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(0.3,9.7) 
+##   Posterior Mean: 0.03
+##   95% Credible Interval: (3.41e-07,0.184)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 8 ======== 
+## Observations -- Sample Size: 8(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 8(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(0.3,10.7) 
+##   Posterior Mean: 0.0273
+##   95% Credible Interval: (3.08e-07,0.168)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 9 ======== 
+## Observations -- Sample Size: 9(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 9(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(0.3,11.7) 
+##   Posterior Mean: 0.025
+##   95% Credible Interval: (2.81e-07,0.154)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 10 ======== 
+## Observations -- Sample Size: 10(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 10(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(0.3,12.7) 
+##   Posterior Mean: 0.0231
+##   95% Credible Interval: (2.58e-07,0.143)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 11 ======== 
+## Observations -- Sample Size: 11(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 11(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(0.3,13.7) 
+##   Posterior Mean: 0.0214
+##   95% Credible Interval: (2.39e-07,0.133)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 12 ======== 
+## Observations -- Sample Size: 12(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 12(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(0.3,14.7) 
+##   Posterior Mean: 0.02
+##   95% Credible Interval: (2.22e-07,0.124)
+\end{verbatim}
+
+\animategraphics[width=7in,controls,loop]{1}{vignette-BetaBinomial-pdf_files/figure-latex/unnamed-chunk-6-}{1}{12}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{APL.r <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+\KeywordTok{BB.plot}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{7}\NormalTok{,}\DataTypeTok{r=}\NormalTok{APL.r)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Prior: Beta(3,7) 
+## 
+## ======== Cohort Number: 1 ======== 
+## Observations -- Sample Size: 1(1)  ||  Number of Response: 0(0)  ||  Number of Failure: 1(1)
+##   Observed Response Rate: 0
+## Posterior: Beta(3,8) 
+##   Posterior Mean: 0.273
+##   95% Credible Interval: (0.0667,0.556)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 2 ======== 
+## Observations -- Sample Size: 2(1)  ||  Number of Response: 1(1)  ||  Number of Failure: 1(0)
+##   Observed Response Rate: 0.5
+## Posterior: Beta(4,8) 
+##   Posterior Mean: 0.333
+##   95% Credible Interval: (0.109,0.61)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 3 ======== 
+## Observations -- Sample Size: 3(1)  ||  Number of Response: 1(0)  ||  Number of Failure: 2(1)
+##   Observed Response Rate: 0.333
+## Posterior: Beta(4,9) 
+##   Posterior Mean: 0.308
+##   95% Credible Interval: (0.0992,0.572)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 4 ======== 
+## Observations -- Sample Size: 4(1)  ||  Number of Response: 1(0)  ||  Number of Failure: 3(1)
+##   Observed Response Rate: 0.25
+## Posterior: Beta(4,10) 
+##   Posterior Mean: 0.286
+##   95% Credible Interval: (0.0909,0.538)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 5 ======== 
+## Observations -- Sample Size: 5(1)  ||  Number of Response: 2(1)  ||  Number of Failure: 3(0)
+##   Observed Response Rate: 0.4
+## Posterior: Beta(5,10) 
+##   Posterior Mean: 0.333
+##   95% Credible Interval: (0.128,0.581)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 6 ======== 
+## Observations -- Sample Size: 6(1)  ||  Number of Response: 3(1)  ||  Number of Failure: 3(0)
+##   Observed Response Rate: 0.5
+## Posterior: Beta(6,10) 
+##   Posterior Mean: 0.375
+##   95% Credible Interval: (0.163,0.616)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 7 ======== 
+## Observations -- Sample Size: 7(1)  ||  Number of Response: 4(1)  ||  Number of Failure: 3(0)
+##   Observed Response Rate: 0.571
+## Posterior: Beta(7,10) 
+##   Posterior Mean: 0.412
+##   95% Credible Interval: (0.198,0.646)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 8 ======== 
+## Observations -- Sample Size: 8(1)  ||  Number of Response: 5(1)  ||  Number of Failure: 3(0)
+##   Observed Response Rate: 0.625
+## Posterior: Beta(8,10) 
+##   Posterior Mean: 0.444
+##   95% Credible Interval: (0.23,0.671)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 9 ======== 
+## Observations -- Sample Size: 9(1)  ||  Number of Response: 5(0)  ||  Number of Failure: 4(1)
+##   Observed Response Rate: 0.556
+## Posterior: Beta(8,11) 
+##   Posterior Mean: 0.421
+##   95% Credible Interval: (0.215,0.643)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 10 ======== 
+## Observations -- Sample Size: 10(1)  ||  Number of Response: 6(1)  ||  Number of Failure: 4(0)
+##   Observed Response Rate: 0.6
+## Posterior: Beta(9,11) 
+##   Posterior Mean: 0.45
+##   95% Credible Interval: (0.244,0.665)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 11 ======== 
+## Observations -- Sample Size: 11(1)  ||  Number of Response: 7(1)  ||  Number of Failure: 4(0)
+##   Observed Response Rate: 0.636
+## Posterior: Beta(10,11) 
+##   Posterior Mean: 0.476
+##   95% Credible Interval: (0.272,0.685)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 12 ======== 
+## Observations -- Sample Size: 12(1)  ||  Number of Response: 8(1)  ||  Number of Failure: 4(0)
+##   Observed Response Rate: 0.667
+## Posterior: Beta(11,11) 
+##   Posterior Mean: 0.5
+##   95% Credible Interval: (0.298,0.702)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 13 ======== 
+## Observations -- Sample Size: 13(1)  ||  Number of Response: 8(0)  ||  Number of Failure: 5(1)
+##   Observed Response Rate: 0.615
+## Posterior: Beta(11,12) 
+##   Posterior Mean: 0.478
+##   95% Credible Interval: (0.282,0.678)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 14 ======== 
+## Observations -- Sample Size: 14(1)  ||  Number of Response: 9(1)  ||  Number of Failure: 5(0)
+##   Observed Response Rate: 0.643
+## Posterior: Beta(12,12) 
+##   Posterior Mean: 0.5
+##   95% Credible Interval: (0.306,0.694)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 15 ======== 
+## Observations -- Sample Size: 15(1)  ||  Number of Response: 10(1)  ||  Number of Failure: 5(0)
+##   Observed Response Rate: 0.667
+## Posterior: Beta(13,12) 
+##   Posterior Mean: 0.52
+##   95% Credible Interval: (0.328,0.709)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 16 ======== 
+## Observations -- Sample Size: 16(1)  ||  Number of Response: 11(1)  ||  Number of Failure: 5(0)
+##   Observed Response Rate: 0.688
+## Posterior: Beta(14,12) 
+##   Posterior Mean: 0.538
+##   95% Credible Interval: (0.349,0.722)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 17 ======== 
+## Observations -- Sample Size: 17(1)  ||  Number of Response: 12(1)  ||  Number of Failure: 5(0)
+##   Observed Response Rate: 0.706
+## Posterior: Beta(15,12) 
+##   Posterior Mean: 0.556
+##   95% Credible Interval: (0.369,0.734)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 18 ======== 
+## Observations -- Sample Size: 18(1)  ||  Number of Response: 13(1)  ||  Number of Failure: 5(0)
+##   Observed Response Rate: 0.722
+## Posterior: Beta(16,12) 
+##   Posterior Mean: 0.571
+##   95% Credible Interval: (0.388,0.745)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 19 ======== 
+## Observations -- Sample Size: 19(1)  ||  Number of Response: 14(1)  ||  Number of Failure: 5(0)
+##   Observed Response Rate: 0.737
+## Posterior: Beta(17,12) 
+##   Posterior Mean: 0.586
+##   95% Credible Interval: (0.406,0.755)
+\end{verbatim}
+
+\begin{verbatim}
+## ======== Cohort Number: 20 ======== 
+## Observations -- Sample Size: 20(1)  ||  Number of Response: 15(1)  ||  Number of Failure: 5(0)
+##   Observed Response Rate: 0.75
+## Posterior: Beta(18,12) 
+##   Posterior Mean: 0.6
+##   95% Credible Interval: (0.423,0.765)
+\end{verbatim}
+
+\animategraphics[width=7in,controls,loop]{1}{vignette-BetaBinomial-pdf_files/figure-latex/unnamed-chunk-7-}{1}{20}
+
+The results is identical with original paper's results.
+
+\subsection{A Web application for choosing prior and simulating
+posterior
+distributions}\label{a-web-application-for-choosing-prior-and-simulating-posterior-distributions}
+
+For users' convenience, we also develop a web application to provide the
+prior information and posterior distributions inferences. Please refer
+to the following link:
+\url{https://allen.shinyapps.io/Beta_Bayes_Prior/}
+
+The interface is display in the Figure 1:
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{demo.png}
+\caption{Display of the web application.}
+\end{figure}
+
+\textbf{Remark} Credible intervals are not unique on a posterior
+distribution. There are two main methods to define a suitble credible
+interval:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Equal-tailed (ET)} interval is the interval where the
+  probability of being below the interval is as likely as being above
+  it. This interval will include the median.
+\item
+  \textbf{Highest Posterior Density (HPD)} interval is the narrowest
+  interval, which for a unimodal distribution will involve choosing
+  those values of highest probability density including the mode.
+\end{itemize}
+
+How to choose the credible interval is also our interest.
+
+\section{Single-arm Design Studies}\label{single-arm-design-studies}
+
+We mainly want to determin the following quantities:
+
+\begin{itemize}
+\tightlist
+\item
+  Sample Size Determination (\(N_{max}\))
+\item
+  Stopping Boundary (\(\theta_L\), \(\theta_U\))
+\end{itemize}
+
+We consider the following two bayesian methods: Posterior Probability
+(abbr. ``PostP'') and Predictive Probability (abbr. ``PredP''). For
+Phase IIA (earlier) trials, we prefer to allow early stopping due to
+futility, but not due to efficacy, and final stop due to efficacy or
+pre-spicified \(N_{max}\).
+
+\subsection{\texorpdfstring{Sequential Stopping based on Posterior
+Probability design
+(\texttt{PostP})}{Sequential Stopping based on Posterior Probability design (PostP)}}\label{sequential-stopping-based-on-posterior-probability-design-postp}
+
+A simple and practical method is to use the posterior probability to
+monitor the trials. Dring each trial, the data are monitored
+continuously, and decisions are made adaptively until the pre-specified
+maximum sample size \(N_{max}\) is reached.(Thall and Simon 1994)
+
+Suppose we have decieded a maximum number of accrued patients
+\(N_{max}\), and assume that the number of responses \(X\) among the
+current \(n\) patients (\(n \le N_{max}\)) follows a \(Binomial(n, p)\)
+distribution. By the conjugacy of the beta prior and binomial
+likelihood, the posterior distribution of the response rate \(p|X=x\) is
+still a beta distribution,
+
+\[p|x \sim Beta(a + x, b + n - x).\]
+
+Then the posterior probability\\
+\(PostP=Pr(p>p_0|x)\) can be used to decide the sample size and stopping
+boundary.
+
+\subsubsection{Algorithm 1}\label{algorithm-1}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Step 1:} Specified the upper and lower probability cutoffs
+  \(\theta_U\) and \(\theta_L\). Typically, \(\theta_U \in [0.9,1]\) and
+  \(\theta_L \in [0,0.05]\), set true null response rate \(p_0\) a
+  pre-specified value.
+\item
+  \textbf{Step 2:} Let
+  \[S_U =\min \{x \in \mathbb{N}:  PostP > \theta_U \}\] and
+  \[ S_L =\max \{x \in \mathbb{N}:  PostP < \theta_L \}\] be the upper
+  and lower decision boudries based on the number of observed responses.
+\item
+  \textbf{Step 3:} Make decisions after observing another \(x\)
+  responses out of \(n\) patients:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    If \(x \ge S_U\), then stop the trial for efficacy; (could be
+    ignored for futility only)
+  \item
+    if \(x \le S_L\), then stop the trial for futility;
+  \item
+    otherwise, continue the trial until \(N_{max}\) reached.
+  \end{itemize}
+\end{itemize}
+
+Although the stopping rule requires that the trial be terminated to
+declare the experimental drug promising if \(x \ge S_U\), investigators
+rarely stop the trial in such a case so that more patients are allowed
+to benefit from the ``good'' drug. Therefore, the stopping rule for
+superiority of the drug is often not implemented in a single-arm phase
+II trial.
+
+\subsubsection{\texorpdfstring{the cancer treatment neo-adjuvant therapy
+and surgery with single pCR endpoint using \texttt{PostP}
+method}{the cancer treatment neo-adjuvant therapy and surgery with single pCR endpoint using PostP method}}\label{the-cancer-treatment-neo-adjuvant-therapy-and-surgery-with-single-pcr-endpoint-using-postp-method}
+
+First of all, we apply Simon's two-stage design:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(clinfun)}
+\KeywordTok{ph2simon}\NormalTok{(}\DataTypeTok{pu=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{pa=}\FloatTok{0.30}\NormalTok{, }\DataTypeTok{ep1=}\FloatTok{0.05}\NormalTok{, }\DataTypeTok{ep2=}\FloatTok{0.10}\NormalTok{, }\DataTypeTok{nmax=}\DecValTok{100}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Simon 2-stage Phase II design 
+## 
+## Unacceptable response rate:  0.15 
+## Desirable response rate:  0.3 
+## Error rates: alpha =  0.05 ; beta =  0.1 
+## 
+##         r1 n1  r  n EN(p0) PET(p0)
+## Optimal  5 30 17 82  45.05  0.7106
+## Minimax  6 42 14 64  51.80  0.5545
+\end{verbatim}
+
+Then we apply the PostP bayesian design by using the vague prior
+\(Beta(1,1)\). (In the future, we can use informative priors)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{source}\NormalTok{(}\StringTok{"postp.R"}\NormalTok{)}
+\KeywordTok{PostP.design}\NormalTok{(}\DataTypeTok{type =} \StringTok{"futility"}\NormalTok{, }\DataTypeTok{nmax=}\DecValTok{100}\NormalTok{, }\DataTypeTok{a=}\DecValTok{1}\NormalTok{, }\DataTypeTok{b=}\DecValTok{1}\NormalTok{, }\DataTypeTok{p0=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{delta=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{theta=}\FloatTok{0.05}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     n bound
+## 1   1    NA
+## 8   8     0
+## 13 13     1
+## 18 18     2
+## 23 23     3
+## 27 27     4
+## 32 32     5
+## 36 36     6
+## 40 40     7
+## 44 44     8
+## 48 48     9
+## 52 52    10
+## 56 56    11
+## 60 60    12
+## 64 64    13
+## 68 68    14
+## 72 72    15
+## 76 76    16
+## 80 80    17
+## 84 84    18
+## 88 88    19
+## 92 92    20
+## 95 95    21
+## 99 99    22
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{PostP.design}\NormalTok{(}\DataTypeTok{type =} \StringTok{"efficacy"}\NormalTok{, }\DataTypeTok{nmax=}\DecValTok{100}\NormalTok{, }\DataTypeTok{a=}\DecValTok{1}\NormalTok{, }\DataTypeTok{b=}\DecValTok{1}\NormalTok{, }\DataTypeTok{p0=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{delta=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{theta=}\FloatTok{0.9}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     n bound
+## 1   1     1
+## 3   3     2
+## 7   7     3
+## 12 12     4
+## 17 17     5
+## 22 22     6
+## 27 27     7
+## 32 32     8
+## 37 37     9
+## 42 42    10
+## 48 48    11
+## 53 53    12
+## 59 59    13
+## 64 64    14
+## 70 70    15
+## 76 76    16
+## 81 81    17
+## 87 87    18
+## 93 93    19
+## 99 99    20
+\end{verbatim}
+
+Theoretically, We can choose any one row as the early stopping. Here we
+can compare the Simon's Optimal design result, and select r1/n1=5/32 as
+the stopping rule for futility, r/n=17/81 as final stop for efficacy.
+(or r1/n1/r/n = 6/36/14/64 sompared with Simon's Minimax).
+
+We can also use Jeffrey prior: \(Beta(0.5,0.5)\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{PostP.design}\NormalTok{(}\DataTypeTok{type =} \StringTok{"futility"}\NormalTok{, }\DataTypeTok{nmax=}\DecValTok{100}\NormalTok{, }\DataTypeTok{a=}\FloatTok{0.5}\NormalTok{, }\DataTypeTok{b=}\FloatTok{0.5}\NormalTok{, }\DataTypeTok{p0=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{delta=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{theta=}\FloatTok{0.05}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     n bound
+## 1   1    NA
+## 6   6     0
+## 12 12     1
+## 17 17     2
+## 22 22     3
+## 26 26     4
+## 30 30     5
+## 35 35     6
+## 39 39     7
+## 43 43     8
+## 47 47     9
+## 51 51    10
+## 55 55    11
+## 59 59    12
+## 63 63    13
+## 67 67    14
+## 71 71    15
+## 75 75    16
+## 79 79    17
+## 83 83    18
+## 87 87    19
+## 91 91    20
+## 94 94    21
+## 98 98    22
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{PostP.design}\NormalTok{(}\DataTypeTok{type =} \StringTok{"efficacy"}\NormalTok{, }\DataTypeTok{nmax=}\DecValTok{100}\NormalTok{, }\DataTypeTok{a=}\FloatTok{0.5}\NormalTok{, }\DataTypeTok{b=}\FloatTok{0.5}\NormalTok{, }\DataTypeTok{p0=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{delta=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{theta=}\FloatTok{0.9}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     n bound
+## 1   1     1
+## 3   3     2
+## 6   6     3
+## 11 11     4
+## 15 15     5
+## 20 20     6
+## 25 25     7
+## 30 30     8
+## 35 35     9
+## 41 41    10
+## 46 46    11
+## 52 52    12
+## 57 57    13
+## 63 63    14
+## 68 68    15
+## 74 74    16
+## 80 80    17
+## 85 85    18
+## 91 91    19
+## 97 97    20
+\end{verbatim}
+
+\subsection{\texorpdfstring{Predictive Probability Design
+(\texttt{PredP})}{Predictive Probability Design (PredP)}}\label{predictive-probability-design-predp}
+
+The predictive probability approach looks into the future objectives
+based on the current observed data to project whether a positive
+conclusion at the end of study is likely or not, and then makes a
+sensible decision at the present time accordingly.(Lee and Liu 2008)
+
+Let \(Y\) be the number of responses in the rest of \(m = N_{max} -n\)
+future patients. Suppose our design is to declare efficacy if the
+posterior probability of \(p\) exceeding some pre-specified level
+\(p_0\) is greater than some threshold \(\theta_T\) . Marginalizing
+\(p\) out of the binomial likelihood, it is well known that
+Y\textbar{}X=x follows a beta-binomial distribution, i.e.
+\(Y|x \sim Beta-Binomial(m, a + x, b + n - x)\).
+
+By the end of the trial, suppose we observe additional \(Y = y\)
+response, then the posterior distribution including future future y
+patient \(p|(X = x, Y = y)\) is also \[Beta(a+x+y; b+N_{max}-x-y)\]. The
+predictive probability (PredP) of trial success can then be calculated
+as follows. Denote the posterior probability with the future data by
+\(B_y = Pr(p > p0 | x, Y = y)\) and \(I_y = I(B_y > \theta_T )\), then
+we have
+
+\[ \begin{aligned} PredP & = Pr_{Y|x} \{Pr(p>p_0|x, Y) \ge \theta_T \} \\
+        & = E \{ I[Pr(p>p_0|x, Y) \ge \theta_T] \Big| x  \}\\
+        & = \sum\limits_{y=0}^{m}  I[Pr(p>p_0|x, Y=y) \ge \theta_T] \times Pr(Y=y|x)\\
+        & = \sum\limits_{y=0}^{N_{max} -n}  I_y \times Pr(Y=y|x). \label{predp}
+        \end{aligned} \]
+
+Note that if there were no indicator function in \ref{predp}, the PredP
+simply reduces to the PostP after averaging out the unobserved Y.
+
+\[\sum\limits_{y=0}^{N_{max} -n}  Pr(p>p_0|x, Y=y) \times Pr(Y=y|x) = Pr(p>p_0|x)\]
+
+Then we can decide the sample size and stop boundary by using the
+following algorithm:
+
+\subsubsection{Algorithm 2}\label{algorithm-2}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Step 1:} Specified the upper and lower probability cutoffs
+  \(\theta_U\) and \(\theta_L\), typically, \(\theta_U \in [0.9,1]\) and
+  \(\theta_L \in [0,0.05]\). Specified cutoff \(\theta_T\) for the
+  future \(y\) patients, typically, \(\theta_T \in [0.8,1]\). Set true
+  null response rate \(p_0\) a pre-specified value.
+\item
+  \textbf{Step 2:} Given \(x\) obwervations, let
+  \[S_U =\min \{x+y \in \mathbb{N}:  PredP > \theta_U \}\] and
+  \[ S_L =\max \{x+y \in \mathbb{N}:  PredP < \theta_L \}\] be the upper
+  and lower decision boudries based on the number of observed responses.
+\item
+  \textbf{Step 3:} Make decisions after observing another \(x\)
+  responses out of \(n\) patients:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    If \(x \ge S_U\), then stop the trial for efficacy (could be ignored
+    for futility only);
+  \item
+    if \(x \le S_L\), then stop the trial for futility;
+  \item
+    otherwise, continue the trial until \(N_{max}\) reached.
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{\texorpdfstring{the cancer treatment neo-adjuvant therapy
+and surgery with single pCR endpoint using \texttt{PostP}
+method}{the cancer treatment neo-adjuvant therapy and surgery with single pCR endpoint using PostP method}}\label{the-cancer-treatment-neo-adjuvant-therapy-and-surgery-with-single-pcr-endpoint-using-postp-method-1}
+
+Now we can apply the PostP bayesian design to the the cancer treatment
+pCR case, still use the vague prior \(Beta(1,1)\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{source}\NormalTok{(}\StringTok{"predp.R"}\NormalTok{)}
+\KeywordTok{PredP.design}\NormalTok{(}\DataTypeTok{type =} \StringTok{"futility"}\NormalTok{, }\DataTypeTok{nmax=}\DecValTok{100}\NormalTok{, }\DataTypeTok{a=}\DecValTok{1}\NormalTok{, }\DataTypeTok{b=}\DecValTok{1}\NormalTok{, }\DataTypeTok{p0=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{delta=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{theta=}\FloatTok{0.05}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       n bound
+## 1     1    NA
+## 6     6     0
+## 10   10     1
+## 14   14     2
+## 18   18     3
+## 21   21     4
+## 24   24     5
+## 28   28     6
+## 31   31     7
+## 34   34     8
+## 37   37     9
+## 40   40    10
+## 43   43    11
+## 46   46    12
+## 48   48    13
+## 51   51    14
+## 54   54    15
+## 57   57    16
+## 60   60    17
+## 62   62    18
+## 65   65    19
+## 67   67    20
+## 70   70    21
+## 73   73    22
+## 75   75    23
+## 78   78    24
+## 80   80    25
+## 82   82    26
+## 85   85    27
+## 87   87    28
+## 89   89    29
+## 92   92    30
+## 94   94    31
+## 96   96    32
+## 97   97    33
+## 99   99    34
+## 100 100    35
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{PredP.design}\NormalTok{(}\DataTypeTok{type =} \StringTok{"efficacy"}\NormalTok{, }\DataTypeTok{nmax=}\DecValTok{100}\NormalTok{, }\DataTypeTok{a=}\DecValTok{1}\NormalTok{, }\DataTypeTok{b=}\DecValTok{1}\NormalTok{, }\DataTypeTok{p0=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{delta=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{theta=}\FloatTok{0.9}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     n bound
+## 1   1     1
+## 3   3     2
+## 6   6     3
+## 9   9     4
+## 13 13     5
+## 17 17     6
+## 21 21     7
+## 26 26     8
+## 30 30     9
+## 35 35    10
+## 40 40    11
+## 45 45    12
+## 50 50    13
+## 55 55    14
+## 60 60    15
+## 66 66    16
+## 71 71    17
+## 77 77    18
+## 83 83    19
+## 91 91    20
+\end{verbatim}
+
+Based on the Simon's Optimal design result, we can select r1/n1=5/24 as
+the stopping rule for futility, r/n=17/71 as final stop for efficacy.
+(or r1/n1/r/n = 6/28/14/55 sompared with Simon's Minimax). Compared with
+Simon's design and PostP design, under the same stopping boudaries,
+PredP design allows smaller sample sizes.
+
+Using Jeffrey prior \(Beta(0.5,0.5)\) the results shown as follws:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{PredP.design}\NormalTok{(}\DataTypeTok{type =} \StringTok{"futility"}\NormalTok{, }\DataTypeTok{nmax=}\DecValTok{100}\NormalTok{, }\DataTypeTok{a=}\FloatTok{0.5}\NormalTok{, }\DataTypeTok{b=}\FloatTok{0.5}\NormalTok{, }\DataTypeTok{p0=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{delta=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{theta=}\FloatTok{0.05}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       n bound
+## 1     1    NA
+## 4     4     0
+## 9     9     1
+## 13   13     2
+## 17   17     3
+## 20   20     4
+## 24   24     5
+## 27   27     6
+## 30   30     7
+## 33   33     8
+## 36   36     9
+## 39   39    10
+## 42   42    11
+## 45   45    12
+## 48   48    13
+## 51   51    14
+## 54   54    15
+## 57   57    16
+## 59   59    17
+## 62   62    18
+## 65   65    19
+## 67   67    20
+## 70   70    21
+## 72   72    22
+## 75   75    23
+## 78   78    24
+## 80   80    25
+## 82   82    26
+## 85   85    27
+## 87   87    28
+## 89   89    29
+## 91   91    30
+## 94   94    31
+## 96   96    32
+## 97   97    33
+## 99   99    34
+## 100 100    35
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{PredP.design}\NormalTok{(}\DataTypeTok{type =} \StringTok{"efficacy"}\NormalTok{, }\DataTypeTok{nmax=}\DecValTok{100}\NormalTok{, }\DataTypeTok{a=}\FloatTok{0.5}\NormalTok{, }\DataTypeTok{b=}\FloatTok{0.5}\NormalTok{, }\DataTypeTok{p0=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{delta=}\FloatTok{0.15}\NormalTok{, }\DataTypeTok{theta=}\FloatTok{0.9}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     n bound
+## 1   1     1
+## 2   2     2
+## 5   5     3
+## 9   9     4
+## 12 12     5
+## 16 16     6
+## 21 21     7
+## 25 25     8
+## 30 30     9
+## 34 34    10
+## 39 39    11
+## 44 44    12
+## 49 49    13
+## 54 54    14
+## 60 60    15
+## 65 65    16
+## 71 71    17
+## 77 77    18
+## 83 83    19
+## 90 90    20
+\end{verbatim}
+
+\subsubsection{MM \& APL data examples for PostP and PredP
+design}\label{mm-apl-data-examples-for-postp-and-predp-design}
+
+We also used the MM \& APL data to illustrate two bayesian methods by
+animations.
+
+Suppose we want to monitor the patients one-by-one, that is, the patient
+outcome follows \(Bernoulli(p)\), and the stopping boundary can be
+deciede based on updating posteriors. We can create the animation plots
+to search the stopping boundary by taking the MM and APL data examples.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## Test MM data from the above examples}
+\KeywordTok{bayes.desgin}\NormalTok{(}\DataTypeTok{mu0 =} \NormalTok{MM.mean, }\DataTypeTok{sigma =} \KeywordTok{sqrt}\NormalTok{(MM.var), }\DataTypeTok{r =} \NormalTok{MM.r, }\DataTypeTok{stop.rule =} \StringTok{"futility"}\NormalTok{, }
+    \DataTypeTok{p0 =} \FloatTok{0.1}\NormalTok{, }\DataTypeTok{ymax =} \DecValTok{18}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $para.a
+## [1] 0.3
+## 
+## $para.b
+## [1] 2.7
+## 
+## $`poterior mean`
+##  [1] 0.0750 0.0600 0.0500 0.0429 0.0375 0.0333 0.0300 0.0273 0.0250 0.0231
+## [11] 0.0214 0.0200
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: stats4
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: splines
+\end{verbatim}
+
+\begin{verbatim}
+## [1] "Stop the trial for futility after the inclusion of 7 patients."
+\end{verbatim}
+
+\animategraphics[width=7in,controls,loop]{1}{vignette-BetaBinomial-pdf_files/figure-latex/unnamed-chunk-13-}{1}{13}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## Test APL data from the above examples}
+\KeywordTok{bayes.desgin}\NormalTok{(}\DataTypeTok{mu0 =} \NormalTok{APL.mean, }\DataTypeTok{sigma =} \KeywordTok{sqrt}\NormalTok{(APL.var), }\DataTypeTok{r =} \NormalTok{APL.r, }\DataTypeTok{stop.rule =} \StringTok{"efficacy"}\NormalTok{, }
+    \DataTypeTok{p0 =} \FloatTok{0.1}\NormalTok{, }\DataTypeTok{ymax =} \FloatTok{4.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $para.a
+## [1] 3
+## 
+## $para.b
+## [1] 7
+## 
+## $`poterior mean`
+##  [1] 0.273 0.333 0.308 0.286 0.333 0.375 0.412 0.444 0.421 0.450 0.476
+## [12] 0.500 0.478 0.500 0.520 0.539 0.556 0.571 0.586 0.600
+## 
+## [1] "Stop the trial for efficacy after the inclusion of 10 patients."
+\end{verbatim}
+
+\animategraphics[width=7in,controls,loop]{1}{vignette-BetaBinomial-pdf_files/figure-latex/unnamed-chunk-14-}{1}{21}
+
+\section{Summary and Future Works}\label{summary-and-future-works}
+
+The frameworks of both \emph{PostP} and \emph{PredP} methods allow the
+researcher to monitor the trial continously or by any cohort size.
+Compared to Simon's minimax and optimal two-stage design, the PostP and
+PredP designs monitor the data more frequently, both two designs have a
+larger probability of early termination and a smaller expected sample
+size in the null case than Simon's. All designs have the same maximum
+sample size with controlled Type I and Type II error rates.
+
+We can consider \(pCR\) not only binary level, but also multinomial
+level, then we can use \textbf{Direchlet-Multinomial} prior and similar
+idea to develop the single-arm design (Thall, Simon, and Estey 1995).
+Another potential work is to extend the single primary endpoint to
+co-primary endpoint by using similar Bayesian idea (or hierarchical
+Bayesian design if the endpoint have some hierarchical structures)
+
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\hypertarget{refs}{}
+\hypertarget{ref-lee2008predictive}{}
+Lee, J Jack, and Diane D Liu. 2008. ``A Predictive Probability Design
+for Phase II Cancer Clinical Trials.'' \emph{Clinical Trials} 5 (2).
+SAGE Publications: 93--106.
+
+\hypertarget{ref-thall1994practical}{}
+Thall, Peter F, and Richard Simon. 1994. ``Practical Bayesian Guidelines
+for Phase IIB Clinical Trials.'' \emph{Biometrics}. JSTOR, 337--49.
+
+\hypertarget{ref-thall1995bayesian}{}
+Thall, Peter F, Richard M Simon, and Elihu H Estey. 1995. ``Bayesian
+Sequential Monitoring Designs for Single-Arm Clinical Trials with
+Multiple Outcomes.'' \emph{Statistics in Medicine} 14 (4). Wiley Online
+Library: 357--79.
+
+\hypertarget{ref-zohar2008bayesian}{}
+Zohar, Sarah, Satoshi Teramukai, and Yinghui Zhou. 2008. ``Bayesian
+Design and Conduct of Phase II Single-Arm Clinical Trials with Binary
+Outcomes: A Tutorial.'' \emph{Contemporary Clinical Trials} 29 (4).
+Elsevier: 608--16.
+
+\end{document}
