@@ -30,7 +30,7 @@ trial decision cutoffs based on the predictive probability.
 }
 \examples{
 # Using vague prior Uniform(0,1), i.e. Beta(1,1)
-PredP(16, 23, 40, 1, 1, 0.15, 0.9)
+PredP(16, 23, 40, 1, 1, 0.5, 0.9)
 }
 \references{
 Lee, J. J., Liu, D. D. (2008).

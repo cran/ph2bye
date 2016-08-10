@@ -11,6 +11,11 @@
 #'
 #' @author Yalin Zhu <yalin.zhu@outlook.com>
 #'
+#' @name ph2bye-package
+#' @rdname package-ph2bye
+#' @aliases ph2bye
 #' @docType package
-#' @name ph2bye
+#'
+#' @importFrom Rcpp evalCpp
+#' @useDynLib ph2bye
 NULL
