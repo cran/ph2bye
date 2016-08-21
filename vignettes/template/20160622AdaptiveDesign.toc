@@ -1,6 +1,0 @@
-\beamer@endinputifotherversion {3.36pt}
-\beamer@sectionintoc {1}{Adaptive Design}{3}{0}{1}
-\beamer@sectionintoc {2}{Examples}{10}{0}{2}
-\beamer@subsectionintoc {2}{1}{Group Sequential Design (GSD)}{10}{0}{2}
-\beamer@subsectionintoc {2}{2}{Sample Size Re-estimation (SSR)}{24}{0}{2}
-\beamer@sectionintoc {3}{Practical Considerations}{35}{0}{3}

@@ -19,7 +19,7 @@ PredP(x, n, nmax, a, b, p0, theta_t)
 
 \item{p0}{the the response rate for the standard drug.}
 
-\item{theta_t}{the prespecified target probability; tipically, \eqn{\theta_T = [0.85, 0.95]}.}
+\item{theta_t}{the cutoff probability for efficacy including future patients; typically, \eqn{\theta_T = [0.85, 0.95]}. Set 0.9 by default.}
 }
 \value{
 \item{prob}{the predictive probability: \eqn{PP = \sum\limits_{y=0}^{n_{max}-n} Pr(Y=y | x) I(\Pr(p > p_0 | Y=y, x) \geq \theta_T) }}

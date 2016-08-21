@@ -19,10 +19,10 @@ PostP.design(type, nmax, a, b, p0, theta, optimize)
 
 \item{theta}{the cutoff probability: typically, \eqn{\theta = [0.9, 0.99]} for efficacy, \eqn{\theta = [0.01, 0.1]} for futility.}
 
-\item{optimize}{logical value, if optimize=TRUE, then only output the minimal sample size for the same number of futility boundaries and maximal sample size for the same number efficacy boundaries}
+\item{optimize}{logical value, if optimize=TRUE, then only output the minimal sample size for the same number of futility and efficacy boundaries.}
 }
 \value{
-\item{boundset}{the boundaries set; \eqn{U_n} or \eqn{L_n}}
+\item{boundset}{the boundaries set: \eqn{U_n} or \eqn{L_n}}
 }
 \description{
 The design function to sequentially monitor sample size and boundary based on Thall and Simon's criterion.

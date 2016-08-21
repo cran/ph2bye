@@ -17,11 +17,11 @@ PredP.design(type, nmax, a, b, p0, theta_t, theta, optimize)
 
 \item{p0}{the the response rate for the standard drug.}
 
-\item{theta_t}{the prespecified target probability; tipically, \eqn{\theta_T = [0.85, 0.95]}. Set 0.9 by default.}
+\item{theta_t}{the cutoff probability for efficacy including future patients; typically, \eqn{\theta_T = [0.85, 0.95]}. Set 0.9 by default.}
 
 \item{theta}{the cutoff probability: typically, \eqn{\theta = [0.9, 0.99]} for efficacy, \eqn{\theta = [0.01, 0.1]} for futility.}
 
-\item{optimize}{logical value, if optimize=TRUE, then only output the minimal sample size for the same number of futility boundaries and maximal sample size for the same number efficacy boundaries}
+\item{optimize}{logical value, if optimize=TRUE, then only output the minimal sample size for the same number of futility and efficacy boundaries.}
 }
 \value{
 \item{boundset}{the boundaries set: \eqn{U_n} or \eqn{L_n}}
